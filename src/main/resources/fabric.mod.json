@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "roanokelib",
+  "version": "${version}",
+  "name": "Roanoke Library (Rib)",
+  "description": "Common toolings and code for Roanoke Development Mods",
+  "authors": [
+    "complacentdev",
+    "roanokedev"
+  ],
+  "license": "All Right's Reserved",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "Rib"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.14.22",
+    "fabric": "*",
+    "minecraft": "1.20.1",
+    "cobblemon": ">=1.4.0+1.20.1"
+  }
+}
