@@ -57,7 +57,7 @@ public class GuiUtils {
                         Text.literal(" + ").append(Text.literal(moveFour).formatted(Formatting.WHITE))
                 })
                 .setCustomName(
-                        pokemon.getDisplayName().formatted(Formatting.LIGHT_PURPLE).append(Rib.GymUtils.INSTANCE.parseText("<reset> <white>(lvl " + pokemon.getLevel() + ")"))
+                        pokemon.getDisplayName().formatted(Formatting.LIGHT_PURPLE).append(Rib.Rib.INSTANCE.parseText("<reset> <white>(lvl " + pokemon.getLevel() + ")"))
                 )
                 .build();
     }

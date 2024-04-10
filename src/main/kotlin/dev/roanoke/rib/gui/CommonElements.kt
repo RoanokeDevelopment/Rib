@@ -14,7 +14,7 @@ class CommonElements {
         fun backButton(title: String, gui: SimpleGui): GuiElementBuilder {
             return GuiElementBuilder.from(
                 Items.ARROW.defaultStack.setCustomName(
-                    Rib.messages.getDisplayMessage(title)
+                    Rib.Rib.parseText(title)
                 )
             ).setCallback { x: Int, y: ClickType?, z: SlotActionType? ->
                 gui.open()

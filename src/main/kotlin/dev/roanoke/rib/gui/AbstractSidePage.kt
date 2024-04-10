@@ -27,7 +27,7 @@ abstract class AbstractSidePage(
 
     fun open() {
         preOpen()
-        gui.title = Rib.GymUtils.parseText(title)
+        gui.title = Rib.Rib.parseText(title)
         applyButtons()
         applyElements()
         GuiUtils.fillGUI(gui)
