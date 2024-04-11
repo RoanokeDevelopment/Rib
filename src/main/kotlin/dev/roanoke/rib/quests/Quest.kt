@@ -1,12 +1,10 @@
 package dev.roanoke.rib.quests
 
 import com.google.gson.JsonObject
+import dev.roanoke.rib.quests.types.BreakBlockQuest
+import dev.roanoke.rib.quests.types.CatchPokemonQuest
+import dev.roanoke.rib.quests.types.CraftItemQuest
 import net.minecraft.text.Text
-import network.roanoke.cskyblock.Quests.QuestGroup
-import network.roanoke.cskyblock.Quests.QuestProvider
-import network.roanoke.cskyblock.Quests.Types.BreakBlockQuest
-import network.roanoke.cskyblock.Quests.Types.CatchPokemonQuest
-import network.roanoke.cskyblock.Quests.Types.CraftItemQuest
 import network.roanoke.cskyblock.Quests.Types.HarvestApricornQuest
 import java.util.UUID
 
