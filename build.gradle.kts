@@ -90,8 +90,8 @@ publishing {
       from(components["java"])
 
       // Set groupId, artifactId, and version according to your project properties
-      groupId = project.group.toString()
-      artifactId = project.name
+      groupId = "dev.roanoke"
+      artifactId = "rib"
       version = project.version.toString()
     }
   }
