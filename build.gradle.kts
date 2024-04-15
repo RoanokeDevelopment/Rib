@@ -60,25 +60,6 @@ tasks {
         }
     }
 
-    publishing {
-        publications {
-            create<MavenPublication>("mavenJava") {
-                artifact(remapJar) {
-                    builtBy(remapJar)
-                }
-                artifact(kotlinSourcesJar) {
-                    builtBy(remapSourcesJar)
-                }
-            }
-        }
-
-        // select the repositories you want to publish to
-        repositories {
-            // uncomment to publish to the local maven
-            // mavenLocal()
-        }
-    }
-
     compileKotlin {
         kotlinOptions.jvmTarget = "17"
     }
@@ -92,6 +73,26 @@ java {
     withSourcesJar()
 }
 
+publishing {
+  repositories {
+    maven {
+      name = "roanoke-development"
+      url = uri("https://vault.roanoke.dev/releases")
+      credentials {
+        username = property("roanokeDevelopmentUsername").toString()
+        password = property("roanokeDevelopmentPassword").toString()
+      }
+    }
+  }
+  publications {
+    create<MavenPublication>("mavenJava") {
+      // Assuming 'java' component exists and represents what you want to publish
+      from(components["java"])
 
-
-// configure the maven publication
+      // Set groupId, artifactId, and version according to your project properties
+      groupId = project.group.toString()
+      artifactId = project.name
+      version = project.version.toString()
+    }
+  }
+}
