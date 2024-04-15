@@ -4,8 +4,8 @@ import com.google.gson.JsonObject
 import dev.roanoke.rib.quests.types.BreakBlockQuest
 import dev.roanoke.rib.quests.types.CatchPokemonQuest
 import dev.roanoke.rib.quests.types.CraftItemQuest
+import dev.roanoke.rib.quests.types.HarvestApricornQuest
 import net.minecraft.text.Text
-import network.roanoke.cskyblock.Quests.Types.HarvestApricornQuest
 import java.util.UUID
 
 abstract class Quest(

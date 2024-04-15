@@ -1,4 +1,4 @@
-package network.roanoke.cskyblock.Quests.Types
+package dev.roanoke.rib.quests.types
 
 import com.cobblemon.mod.common.api.apricorn.Apricorn
 import com.cobblemon.mod.common.api.events.CobblemonEvents

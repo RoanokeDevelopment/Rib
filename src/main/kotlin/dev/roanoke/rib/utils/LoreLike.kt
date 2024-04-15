@@ -7,11 +7,11 @@ class LoreLike {
 
     var lore: MutableList<Text> = mutableListOf()
 
-    fun of(string: String) {
+    fun ofString(string: String) {
         lore.add(Rib.Rib.parseText(string))
     }
 
-    fun of(stringList: List<String>) {
+    fun ofStringList(stringList: List<String>) {
         lore.addAll(
             stringList.map {
                 Rib.Rib.parseText(it)
@@ -19,11 +19,11 @@ class LoreLike {
         )
     }
 
-    fun of(text: Text) {
+    fun ofText(text: Text) {
         lore.add(text)
     }
 
-    fun of(textList: List<Text>) {
+    fun ofTextList(textList: List<Text>) {
         lore.addAll(textList)
     }
 
