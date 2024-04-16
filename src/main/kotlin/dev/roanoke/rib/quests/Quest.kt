@@ -5,6 +5,7 @@ import dev.roanoke.rib.quests.types.BreakBlockQuest
 import dev.roanoke.rib.quests.types.CatchPokemonQuest
 import dev.roanoke.rib.quests.types.CraftItemQuest
 import dev.roanoke.rib.quests.types.HarvestApricornQuest
+import dev.roanoke.rib.utils.LoreLike
 import net.minecraft.text.Text
 import java.util.UUID
 
@@ -13,7 +14,7 @@ abstract class Quest(
     var id: UUID = UUID.randomUUID(),
     var provider: QuestProvider,
     var group: QuestGroup
-) {
+): QuestLike {
 
     protected fun notifyProgress() {
         provider.onQuestProgress(this)
@@ -25,11 +26,17 @@ abstract class Quest(
         }
     }
 
-    fun isActive(): Boolean {
-        return (!completed() && provider.isQuestActive(this))
+    override fun description(): LoreLike {
+        return LoreLike.ofText(taskMessage())
     }
 
-    abstract fun completed(): Boolean
+    override fun progress(): LoreLike {
+        return LoreLike.ofText(progressMessage())
+    }
+
+    override fun isActive(): Boolean {
+        return (!completed() && provider.isQuestActive(this))
+    }
 
     abstract fun taskMessage(): Text
 

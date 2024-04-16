@@ -3,28 +3,26 @@ package dev.roanoke.rib.utils
 import dev.roanoke.rib.Rib
 import net.minecraft.text.Text
 
-class LoreLike {
+class LoreLike(
+    val lore: List<Text> = listOf()
+) {
 
-    var lore: MutableList<Text> = mutableListOf()
+    companion object {
+        fun ofString(string: String): LoreLike {
+            return LoreLike(listOf((Rib.Rib.parseText(string))))
+        }
 
-    fun ofString(string: String) {
-        lore.add(Rib.Rib.parseText(string))
-    }
+        fun ofStringList(stringList: List<String>): LoreLike {
+            return LoreLike(
+                stringList.map {
+                    Rib.Rib.parseText(it)
+                }
+            )
+        }
 
-    fun ofStringList(stringList: List<String>) {
-        lore.addAll(
-            stringList.map {
-                Rib.Rib.parseText(it)
-            }
-        )
-    }
-
-    fun ofText(text: Text) {
-        lore.add(text)
-    }
-
-    fun ofTextList(textList: List<Text>) {
-        lore.addAll(textList)
+        fun ofText(text: Text): LoreLike {
+            return LoreLike(listOf(text))
+        }
     }
 
 }

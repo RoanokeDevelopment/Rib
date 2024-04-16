@@ -2,17 +2,17 @@ package dev.roanoke.rib.quests
 
 interface QuestProvider {
 
-    fun getAllQuests(): List<Quest>
+    fun getAllQuests(): List<QuestLike>
     fun saveQuests()
 
-    fun getQuest(): Quest
+    fun getQuest(): QuestLike
 
     fun questAvailable(): Boolean
 
-    fun onQuestProgress(quest: Quest)
+    fun onQuestProgress(quest: QuestLike)
 
-    fun onQuestComplete(quest: Quest)
+    fun onQuestComplete(quest: QuestLike)
 
-    fun isQuestActive(quest: Quest): Boolean
+    fun isQuestActive(quest: QuestLike): Boolean
 
 }
