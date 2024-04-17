@@ -1,10 +1,11 @@
 package dev.roanoke.rib.gui
 
-import dev.roanoke.rib.utils.PaginatedSection
 import dev.roanoke.rib.utils.SlotRange
+import eu.pb4.sgui.api.ClickType
 import eu.pb4.sgui.api.elements.GuiElementBuilder
 import eu.pb4.sgui.api.gui.SimpleGui
 import net.minecraft.item.Items
+import net.minecraft.screen.slot.SlotActionType
 import net.minecraft.text.Text
 import kotlin.math.ceil
 
@@ -19,6 +20,10 @@ class MultiElement(
 
     var currentPage: Int = 1
 
+    fun autoPaginate(): Boolean {
+        return (backButtonSlot != -1 && forwardButtonSlot != -1)
+    }
+
     fun getItemsPerPage(): Int {
         var itemsPerPage = 0
         for (range in this.slotRanges) {
@@ -27,13 +32,44 @@ class MultiElement(
         return itemsPerPage
     }
 
+    fun needsPagination(): Boolean {
+        return (autoPaginate() && getItemsPerPage() < guiElements.size)
+    }
+
+    fun placePaginationButtons(gui: SimpleGui) {
+        gui.setSlot(backButtonSlot, GuiElementBuilder.from(
+            Items.ARROW.defaultStack.setCustomName(
+                Text.literal("Back")
+            )
+        ).setCallback { x: Int, y: ClickType?, z: SlotActionType? ->
+            this.decrementPage()
+            this.applyToGui(gui)
+        })
+
+        gui.setSlot(forwardButtonSlot, GuiElementBuilder.from(
+            Items.ARROW.defaultStack.setCustomName(
+                Text.literal("Forward")
+            )
+        ).setCallback { x: Int, y: ClickType?, z: SlotActionType? ->
+            this.incremementPage()
+            this.applyToGui(gui)
+        })
+    }
+
     fun applyToGui(gui: SimpleGui) {
-        val itemsPerPage = getItemsPerPage()
+        var itemsPerPage = getItemsPerPage()
+
+        if (needsPagination()) {
+            itemsPerPage -= 2
+        }
 
         var startingIndex = (this.currentPage - 1) * itemsPerPage
 
         for (range in this.slotRanges) {
             for (slot in range.start..range.end) {
+                if (slot == backButtonSlot || slot == forwardButtonSlot) {
+                    continue
+                }
                 if (startingIndex < guiElements.size) {
                     gui.setSlot(slot, guiElements[startingIndex])
                 } else {
@@ -42,6 +78,11 @@ class MultiElement(
                 startingIndex++
             }
         }
+
+        if (needsPagination()) {
+            placePaginationButtons(gui)
+        }
+
     }
 
     fun incremementPage() {

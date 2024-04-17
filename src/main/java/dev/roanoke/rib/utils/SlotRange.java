@@ -9,6 +9,10 @@ public class SlotRange {
         this.end = end;
     }
 
+    public boolean contains(int slot) {
+        return start <= slot && slot <= end;
+    }
+
     public int getStart() {
         return start;
     }

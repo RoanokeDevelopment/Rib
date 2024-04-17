@@ -12,6 +12,8 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import dev.roanoke.rib.Rib;
 
+import java.util.List;
+
 import static net.minecraft.item.Items.*;
 
 public class GuiUtils {
@@ -32,7 +34,7 @@ public class GuiUtils {
 
         return new ItemBuilder(PokemonItem.from(pokemon, 1))
                 .hideAdditional()
-                .addLore(new Text[]{
+                .addLore(List.of(
                         Text.literal("Item: ").formatted(Formatting.DARK_AQUA).append(!pokemon.heldItem().isOf(Items.AIR) ? Text.literal("").append(pokemon.heldItem().getName()).formatted(Formatting.WHITE) : Text.literal("None").formatted(Formatting.WHITE)),
                         Text.literal("Nature: ").formatted(Formatting.LIGHT_PURPLE).append(LocalizationUtilsKt.lang(pokemon.getNature().getDisplayName().replace("cobblemon.", "")).formatted(Formatting.WHITE)),
                         Text.literal("Ability: ").formatted(Formatting.DARK_AQUA).append(LocalizationUtilsKt.lang(pokemon.getAbility().getDisplayName().replace("cobblemon.", "")).formatted(Formatting.WHITE)),
@@ -55,7 +57,7 @@ public class GuiUtils {
                         Text.literal(" + ").append(Text.literal(moveTwo).formatted(Formatting.WHITE)),
                         Text.literal(" + ").append(Text.literal(moveThree).formatted(Formatting.WHITE)),
                         Text.literal(" + ").append(Text.literal(moveFour).formatted(Formatting.WHITE))
-                })
+                ))
                 .setCustomName(
                         pokemon.getDisplayName().formatted(Formatting.LIGHT_PURPLE).append(Rib.Rib.INSTANCE.parseText("<reset> <white>(lvl " + pokemon.getLevel() + ")"))
                 )

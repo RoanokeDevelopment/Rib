@@ -11,6 +11,8 @@ import net.minecraft.text.Text;
 import net.minecraft.text.Texts;
 import net.minecraft.util.Identifier;
 
+import java.util.List;
+
 public class ItemBuilder {
     ItemStack stack = null;
 
@@ -41,7 +43,7 @@ public class ItemBuilder {
         return this;
     }
 
-    public ItemBuilder addLore(Text[] lore) {
+    public ItemBuilder addLore(List<Text> lore) {
         NbtCompound nbt = this.stack.getOrCreateNbt();
         NbtCompound displayNbt = this.stack.getOrCreateSubNbt("display");
         NbtList nbtLore = new NbtList();
@@ -55,6 +57,10 @@ public class ItemBuilder {
         nbt.put("display", displayNbt);
         this.stack.setNbt(nbt);
         return this;
+    }
+
+    public ItemBuilder addLore(LoreLike lore) {
+        return this.addLore(lore.getLore());
     }
 
     public ItemBuilder setCount(int count) {

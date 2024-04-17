@@ -67,7 +67,7 @@ class ItemManager(
                 itemBuilder.addLore(
                     itemData.getAsJsonArray("lore").map {
                         Rib.Rib.parseText(it.asString)
-                    }.toTypedArray()
+                    }
                 )
             }
 
