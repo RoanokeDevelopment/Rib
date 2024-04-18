@@ -4,6 +4,8 @@ import com.google.gson.JsonObject
 import dev.roanoke.rib.quests.Quest
 import dev.roanoke.rib.quests.QuestGroup
 import dev.roanoke.rib.quests.QuestProvider
+import dev.roanoke.rib.utils.ItemBuilder
+import eu.pb4.sgui.api.elements.GuiElementBuilder
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents
 import net.minecraft.block.Block
 import net.minecraft.registry.Registries
@@ -37,25 +39,36 @@ class BreakBlockQuest(name: String = "Default Quest Title",
         }
     }
 
-        init {
-            PlayerBlockBreakEvents.AFTER.register { world, player, pos, state, entity ->
+    override fun getButton(player: ServerPlayerEntity): GuiElementBuilder {
+        return GuiElementBuilder.from(
+            ItemBuilder(block.asItem())
+                .addLore(listOf(
+                    taskMessage(),
+                    progressMessage()
+                )
+            ).build()
+        )
+    }
 
-                if (!isActive()) { return@register }
+    init {
+        PlayerBlockBreakEvents.AFTER.register { world, player, pos, state, entity ->
 
-                if (group.includesPlayer(player as ServerPlayerEntity)) {
-                    if (state.block.equals(block)) {
-                        progress++
-                        this.notifyProgress()
+            if (!isActive()) { return@register }
 
-                        if (completed()) {
-                            this.notifyCompletion()
-                        }
+            if (group.includesPlayer(player as ServerPlayerEntity)) {
+                if (state.block.equals(block)) {
+                    progress++
+                    this.notifyProgress()
 
+                    if (completed()) {
+                        this.notifyCompletion()
                     }
-                }
 
+                }
             }
+
         }
+    }
 
     override fun completed(): Boolean {
         return (progress >= amount)

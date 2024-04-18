@@ -1,11 +1,16 @@
 package dev.roanoke.rib.quests
 
 import com.google.gson.JsonObject
+import dev.roanoke.rib.gui.ButtonElement
 import dev.roanoke.rib.quests.types.BreakBlockQuest
 import dev.roanoke.rib.quests.types.CatchPokemonQuest
 import dev.roanoke.rib.quests.types.CraftItemQuest
 import dev.roanoke.rib.quests.types.HarvestApricornQuest
+import dev.roanoke.rib.utils.ItemBuilder
 import dev.roanoke.rib.utils.LoreLike
+import eu.pb4.sgui.api.elements.GuiElementBuilder
+import net.minecraft.item.Items
+import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.Text
 import java.util.UUID
 
@@ -14,7 +19,18 @@ abstract class Quest(
     var id: UUID = UUID.randomUUID(),
     var provider: QuestProvider,
     var group: QuestGroup
-): QuestLike {
+): QuestLike, ButtonElement {
+
+    override fun getButton(player: ServerPlayerEntity): GuiElementBuilder {
+        return GuiElementBuilder.from(
+            ItemBuilder(Items.STONE)
+                .addLore(listOf(
+                    taskMessage(),
+                    progressMessage()
+                )
+            ).build()
+        )
+    }
 
     protected fun notifyProgress() {
         provider.onQuestProgress(this)
