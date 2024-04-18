@@ -15,7 +15,7 @@ class ItemManager(
 
     private var items: MutableMap<String, ItemBuilder> = mutableMapOf()
 
-    init {
+    fun setup() {
         var file_exists = !itemsConfigPath.toFile().createNewFile()
         if (file_exists) {
             loadItems(itemsConfigPath.toFile())

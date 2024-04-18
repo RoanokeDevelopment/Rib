@@ -18,12 +18,13 @@ public class Messages {
     private HashMap<String, String> messages = new HashMap<>();
     private String prefix = "";
 
-    public Messages(Path filePath) {
+    // bundledFilePath = /messages.json
+    public Messages(Path filePath, String bundledFilePath) {
         try {
             Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
             HashMap<String, String> bundledMessages;
-            try (Reader reader = new InputStreamReader(getClass().getResourceAsStream("/messages.json"), StandardCharsets.UTF_8)) {
+            try (Reader reader = new InputStreamReader(getClass().getResourceAsStream(bundledFilePath), StandardCharsets.UTF_8)) {
                 bundledMessages = gson.fromJson(reader, new TypeToken<HashMap<String, String>>(){}.getType());
             } catch (IOException e) {
                 throw new RuntimeException("Failed to load bundled messages.json", e);
@@ -63,7 +64,7 @@ public class Messages {
                     messages = new HashMap<>();
                 }
             }
-            prefix = getMessage("ggyms.prefix");
+            prefix = getMessage("prefix");
         } catch (IOException e) {
             throw new RuntimeException("Failed to create directories for path " + filePath, e);
         }
