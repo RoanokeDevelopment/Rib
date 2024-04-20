@@ -23,6 +23,12 @@ class LoreLike(
         fun ofText(text: Text): LoreLike {
             return LoreLike(listOf(text))
         }
+
+        fun ofLoreLike(lores: List<LoreLike>): LoreLike {
+            val lore: MutableList<Text> = mutableListOf()
+            lores.forEach { lore.addAll(it.lore) }
+            return LoreLike(lore)
+        }
     }
 
 }

@@ -1,6 +1,7 @@
 package dev.roanoke.rib.quests
 
 import com.google.gson.JsonObject
+import dev.roanoke.rib.Rib
 import dev.roanoke.rib.gui.ButtonElement
 import dev.roanoke.rib.quests.types.BreakBlockQuest
 import dev.roanoke.rib.quests.types.CatchPokemonQuest
@@ -24,6 +25,7 @@ abstract class Quest(
     override fun getButton(player: ServerPlayerEntity): GuiElementBuilder {
         return GuiElementBuilder.from(
             ItemBuilder(Items.STONE)
+                .setCustomName(Rib.Rib.parseText(name))
                 .addLore(listOf(
                     taskMessage(),
                     progressMessage()
