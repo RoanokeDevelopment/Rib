@@ -1,5 +1,7 @@
 package dev.roanoke.rib
 
+import dev.roanoke.rib.callbacks.RibInitCallback
+import dev.roanoke.rib.utils.*
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.fabricmc.loader.api.FabricLoader
@@ -7,9 +9,11 @@ import net.kyori.adventure.platform.fabric.FabricServerAudiences
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.luckperms.api.LuckPerms
 import net.luckperms.api.LuckPermsProvider
+import net.minecraft.command.argument.EntityArgumentType.player
+import net.minecraft.entity.passive.SheepEntity
 import net.minecraft.server.MinecraftServer
 import net.minecraft.text.Text
-import dev.roanoke.rib.utils.*
+import net.minecraft.util.ActionResult
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -45,6 +49,7 @@ class Rib : ModInitializer {
     override fun onInitialize() {
 
         ServerLifecycleEvents.SERVER_STARTED.register {
+            LOGGER.info("[RIB] Initialising Server, Adventure, LuckPerms")
             server = it
             adventure = FabricServerAudiences.of(it)
             try {
@@ -52,6 +57,9 @@ class Rib : ModInitializer {
             } catch (e: IllegalStateException) {
                 LOGGER.error("LuckPerms is not installed or is broken!", e)
             }
+
+            RibInitCallback.EVENT.invoker().interact()
+
         }
 
     }

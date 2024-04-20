@@ -1,5 +1,6 @@
 package dev.roanoke.rib.gui
 
+import dev.roanoke.rib.utils.GuiUtils
 import dev.roanoke.rib.utils.SlotRange
 import eu.pb4.sgui.api.ClickType
 import eu.pb4.sgui.api.elements.GuiElementBuilder
@@ -19,6 +20,12 @@ class MultiElement(
 ) {
 
     var currentPage: Int = 1
+
+    fun applyFillOpen(gui: SimpleGui) {
+        GuiUtils.fillGUI(gui)
+        this.applyToGui(gui)
+        gui.open()
+    }
 
     fun autoPaginate(): Boolean {
         return (backButtonSlot != -1 && forwardButtonSlot != -1)
@@ -67,7 +74,7 @@ class MultiElement(
 
         for (range in this.slotRanges) {
             for (slot in range.start..range.end) {
-                if (slot == backButtonSlot || slot == forwardButtonSlot) {
+                if (needsPagination() && (slot == backButtonSlot || slot == forwardButtonSlot)) {
                     continue
                 }
                 if (startingIndex < guiElements.size) {
