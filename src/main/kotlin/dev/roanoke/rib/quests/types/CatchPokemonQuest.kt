@@ -76,7 +76,7 @@ class CatchPokemonQuest(name: String = "Default Catch Pokemon Quest Title",
     }
 
     override fun progressMessage(): Text {
-        return Text.literal("$taskMessage (${progress} / ${amount})")
+        return Text.literal("$taskMessage (${progress}/${amount})")
     }
 
     override fun saveState(): JsonObject {

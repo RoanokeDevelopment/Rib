@@ -4,7 +4,9 @@ import com.cobblemon.mod.common.api.pokemon.PokemonProperties
 import com.cobblemon.mod.common.item.PokemonItem
 import com.cobblemon.mod.common.pokemon.Pokemon
 import com.google.gson.JsonObject
+import dev.roanoke.rib.Rib
 import net.minecraft.item.Item
+import net.minecraft.item.ItemStack
 
 class PokeMatch(
     val species: String = "any",
@@ -27,16 +29,17 @@ class PokeMatch(
         }
     }
 
-    fun getPokemonItem(): Item {
+    fun getPokemonItem(): ItemStack {
         var properties: String = "random"
         if (species != "any") {
-            properties = species
+            properties = species.split(":")[1]
             if (form != "any") {
                 properties += " $form"
             }
         }
 
-        return PokemonItem.from(PokemonProperties.parse(properties, " ", "=")).item
+        Rib.LOGGER.info("Being parsed: [$properties]")
+        return PokemonItem.from(PokemonProperties.parse(properties, " ", "=").create())
     }
 
     fun matches(pokemon: Pokemon): Boolean {
