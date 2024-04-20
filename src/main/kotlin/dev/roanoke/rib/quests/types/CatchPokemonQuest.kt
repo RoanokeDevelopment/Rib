@@ -2,11 +2,16 @@ package dev.roanoke.rib.quests.types
 
 import com.cobblemon.mod.common.api.events.CobblemonEvents
 import com.google.gson.JsonObject
+import dev.roanoke.rib.Rib
 import dev.roanoke.rib.cobblemon.PokeMatch
 import net.minecraft.text.Text
 import dev.roanoke.rib.quests.Quest
 import dev.roanoke.rib.quests.QuestGroup
 import dev.roanoke.rib.quests.QuestProvider
+import dev.roanoke.rib.utils.ItemBuilder
+import eu.pb4.sgui.api.elements.GuiElementBuilder
+import net.minecraft.item.Items
+import net.minecraft.server.network.ServerPlayerEntity
 import java.util.*
 
 class CatchPokemonQuest(name: String = "Default Catch Pokemon Quest Title",
@@ -51,6 +56,17 @@ class CatchPokemonQuest(name: String = "Default Catch Pokemon Quest Title",
         }
     }
 
+    override fun getButton(player: ServerPlayerEntity): GuiElementBuilder {
+        return GuiElementBuilder.from(
+            ItemBuilder(pokeMatch.getPokemonItem())
+                .setCustomName(Rib.Rib.parseText(name))
+                .addLore(listOf(
+                    progressMessage()
+                )
+            ).build()
+        )
+    }
+
     override fun completed(): Boolean {
         return progress >= amount
     }
@@ -60,7 +76,7 @@ class CatchPokemonQuest(name: String = "Default Catch Pokemon Quest Title",
     }
 
     override fun progressMessage(): Text {
-        return Text.literal("${progress} / ${amount}")
+        return Text.literal("$taskMessage (${progress} / ${amount})")
     }
 
     override fun saveState(): JsonObject {
