@@ -15,5 +15,6 @@ interface QuestGroup {
 
     fun getOnlinePlayers(): List<ServerPlayerEntity>
 
+    fun isOnlyPlayer(player: ServerPlayerEntity): Boolean
 
 }

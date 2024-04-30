@@ -40,6 +40,10 @@ class PlayerQuestGroup(
         return players.contains(player.uuid)
     }
 
+    override fun isOnlyPlayer(player: ServerPlayerEntity): Boolean {
+        return players.contains(player.uuid) && players.size == 1
+    }
+
     override fun getOnlinePlayers(): List<ServerPlayerEntity> {
         return Rib.server?.playerManager?.playerList?.filter {
             players.contains(it.uuid)
