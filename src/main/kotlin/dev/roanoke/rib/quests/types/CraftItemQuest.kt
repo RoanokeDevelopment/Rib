@@ -43,6 +43,10 @@ class CraftItemQuest(name: String = "Default Craft Quest Title",
         }
     }
 
+    override fun applyState(state: JsonObject) {
+        progress = state.get("progress")?.asInt ?: progress
+    }
+
     init {
         ItemCraftedCallback.EVENT.register { player, itemStack, amount ->
             if (!isActive()) { return@register }

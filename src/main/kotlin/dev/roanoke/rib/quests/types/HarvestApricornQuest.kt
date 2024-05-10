@@ -51,6 +51,10 @@ class HarvestApricornQuest(
         }
     }
 
+    override fun applyState(state: JsonObject) {
+        progress = state.get("progress")?.asInt ?: progress
+    }
+
     init {
         CobblemonEvents.APRICORN_HARVESTED.subscribe {
             if (!isActive()) {

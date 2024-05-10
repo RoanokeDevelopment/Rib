@@ -46,6 +46,10 @@ class BreakBlockQuest(name: String = "Default Quest Title",
         }
     }
 
+    override fun applyState(state: JsonObject) {
+        progress = state.get("progress")?.asInt ?: progress
+    }
+
     override fun getButton(player: ServerPlayerEntity): GuiElementBuilder {
         return GuiElementBuilder.from(
             ItemBuilder(block.asItem())

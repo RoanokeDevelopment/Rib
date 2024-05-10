@@ -47,6 +47,10 @@ class CatchPokemonQuest(name: String = "Default Catch Pokemon Quest Title",
         }
     }
 
+    override fun applyState(state: JsonObject) {
+        progress = state.get("progress")?.asInt ?: progress
+    }
+
     init {
         CobblemonEvents.POKEMON_CAPTURED.subscribe {
             if (!isActive()) {

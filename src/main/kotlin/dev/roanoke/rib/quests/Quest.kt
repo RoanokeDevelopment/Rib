@@ -68,6 +68,8 @@ abstract class Quest(
     )
     abstract fun saveState(): JsonObject
 
+    abstract fun applyState(state: JsonObject)
+
     interface QuestFactory {
         fun fromState(json: JsonObject, state: JsonObject, provider: QuestProvider, group: QuestGroup): Quest
 
