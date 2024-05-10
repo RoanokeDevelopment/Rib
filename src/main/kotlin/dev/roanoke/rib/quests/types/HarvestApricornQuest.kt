@@ -22,7 +22,7 @@ class HarvestApricornQuest(
     Quest(name, uuid, provider, group) {
 
     companion object : Quest.QuestFactory {
-        override fun fromState(json: JsonObject, provider: QuestProvider, group: QuestGroup): Quest {
+        override fun fromState(json: JsonObject, state: JsonObject, provider: QuestProvider, group: QuestGroup): Quest {
             val name = json.get("name").asString
             val uuid = UUID.fromString(json.get("uuid").asString)
 
@@ -36,9 +36,18 @@ class HarvestApricornQuest(
             }
 
             val amount = json.get("amount").asInt
-            val progress = json.get("progress").asInt
+
+            // anything that is stateful goes here
+
+            val progress = state.get("progress")?.asInt ?: 0
 
             return HarvestApricornQuest(name, uuid, provider, group, apricorn, amount, progress)
+        }
+    }
+
+    override fun getState(): JsonObject {
+        return JsonObject().apply {
+            addProperty("progress", progress)
         }
     }
 

@@ -25,7 +25,7 @@ class BreakBlockQuest(name: String = "Default Quest Title",
     Quest(name, uuid, provider, group) {
 
     companion object : Quest.QuestFactory {
-        override fun fromState(json: JsonObject, provider: QuestProvider, group: QuestGroup): Quest {
+        override fun fromState(json: JsonObject, state: JsonObject, provider: QuestProvider, group: QuestGroup): Quest {
             val name = json.get("name").asString
             val uuid = UUID.fromString(json.get("uuid").asString)
 
@@ -33,9 +33,16 @@ class BreakBlockQuest(name: String = "Default Quest Title",
             val block: Block = Block.getBlockFromItem(Registries.ITEM.get(Identifier.tryParse(blockString)))
 
             val amount = json.get("amount").asInt
-            val progress = json.get("progress").asInt
+
+            val progress = state.get("progress")?.asInt ?: 0
 
             return BreakBlockQuest(name, uuid, provider, group, block, amount, progress)
+        }
+    }
+
+    override fun getState(): JsonObject {
+        return JsonObject().apply {
+            addProperty("progress", progress)
         }
     }
 

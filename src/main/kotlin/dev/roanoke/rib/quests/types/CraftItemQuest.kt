@@ -22,7 +22,7 @@ class CraftItemQuest(name: String = "Default Craft Quest Title",
     Quest(name, uuid, provider, group) {
 
     companion object : Quest.QuestFactory {
-        override fun fromState(json: JsonObject, provider: QuestProvider, group: QuestGroup): Quest {
+        override fun fromState(json: JsonObject, state: JsonObject, provider: QuestProvider, group: QuestGroup): Quest {
             val name = json.get("name").asString
             val uuid = UUID.fromString(json.get("uuid").asString)
 
@@ -30,9 +30,16 @@ class CraftItemQuest(name: String = "Default Craft Quest Title",
             val item: Item = Registries.ITEM.get(Identifier.tryParse(itemID))
 
             val amount = json.get("amount").asInt
-            val progress = json.get("progress").asInt
+
+            val progress = state.get("progress")?.asInt ?: 0
 
             return CraftItemQuest(name, uuid, provider, group, item, amount, progress)
+        }
+    }
+
+    override fun getState(): JsonObject {
+        return JsonObject().apply {
+            addProperty("progress", progress)
         }
     }
 

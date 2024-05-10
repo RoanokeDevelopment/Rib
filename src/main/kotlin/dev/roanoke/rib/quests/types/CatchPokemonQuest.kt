@@ -26,7 +26,7 @@ class CatchPokemonQuest(name: String = "Default Catch Pokemon Quest Title",
     Quest(name, uuid, provider, group) {
 
     companion object : Quest.QuestFactory {
-        override fun fromState(json: JsonObject, provider: QuestProvider, group: QuestGroup): Quest {
+        override fun fromState(json: JsonObject, state: JsonObject, provider: QuestProvider, group: QuestGroup): Quest {
             val name = json.get("name").asString
             val uuid = UUID.fromString(json.get("uuid").asString)
 
@@ -34,9 +34,16 @@ class CatchPokemonQuest(name: String = "Default Catch Pokemon Quest Title",
             val taskMessage = json.get("taskMessage").asString
 
             val amount = json.get("amount").asInt
-            val progress = json.get("progress").asInt
+
+            val progress = state.get("progress")?.asInt ?: 0
 
             return CatchPokemonQuest(name, uuid, provider, group, pokeMatch, taskMessage, amount, progress)
+        }
+    }
+
+    override fun getState(): JsonObject {
+        return JsonObject().apply {
+            addProperty("progress", progress)
         }
     }
 

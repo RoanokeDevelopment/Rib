@@ -60,25 +60,31 @@ abstract class Quest(
 
     abstract fun progressMessage(): Text
 
+    abstract fun getState(): JsonObject
+
+    @Deprecated(
+        message = "The definition & state of a Quest should be stored separately. Use getState() to get relevant stateful information as a JsonObject",
+        replaceWith = ReplaceWith("getState()")
+    )
     abstract fun saveState(): JsonObject
 
     interface QuestFactory {
-        fun fromState(json: JsonObject, provider: QuestProvider, group: QuestGroup): Quest
+        fun fromState(json: JsonObject, state: JsonObject, provider: QuestProvider, group: QuestGroup): Quest
 
     }
 
     companion object : QuestFactory {
-        override fun fromState(json: JsonObject, provider: QuestProvider, group: QuestGroup): Quest {
+        override fun fromState(json: JsonObject, state: JsonObject, provider: QuestProvider, group: QuestGroup): Quest {
             throw UnsupportedOperationException("Use fromJson method instead.")
         }
 
-        fun fromJson(json: JsonObject, provider: QuestProvider, group: QuestGroup): Quest {
+        fun fromJson(json: JsonObject, state: JsonObject, provider: QuestProvider, group: QuestGroup): Quest {
             val type = json.get("type").asString
             return when (type) {
-                "BreakBlockQuest" -> BreakBlockQuest.fromState(json, provider, group)
-                "CraftItemQuest" -> CraftItemQuest.fromState(json, provider, group)
-                "CatchPokemonQuest" -> CatchPokemonQuest.fromState(json, provider, group)
-                "HarvestApricornQuest" -> HarvestApricornQuest.fromState(json, provider, group)
+                "BreakBlockQuest" -> BreakBlockQuest.fromState(json, state, provider, group)
+                "CraftItemQuest" -> CraftItemQuest.fromState(json, state, provider, group)
+                "CatchPokemonQuest" -> CatchPokemonQuest.fromState(json, state, provider, group)
+                "HarvestApricornQuest" -> HarvestApricornQuest.fromState(json, state, provider, group)
                 else -> throw IllegalArgumentException("Unsupported quest type: $type")
             }
         }
