@@ -11,6 +11,7 @@ import net.minecraft.text.Text;
 import net.minecraft.text.Texts;
 import net.minecraft.util.Identifier;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class ItemBuilder {
@@ -57,6 +58,10 @@ public class ItemBuilder {
         nbt.put("display", displayNbt);
         this.stack.setNbt(nbt);
         return this;
+    }
+
+    public ItemBuilder addLore(Text[] lore) {
+        return this.addLore(Arrays.stream(lore).toList());
     }
 
     public ItemBuilder addLore(LoreLike lore) {
