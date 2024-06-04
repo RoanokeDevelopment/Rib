@@ -15,7 +15,7 @@ import net.minecraft.server.network.ServerPlayerEntity
 import java.util.*
 
 class CatchPokemonQuest(name: String = "Default Catch Pokemon Quest Title",
-                        uuid: UUID = UUID.randomUUID(),
+                        id: String = UUID.randomUUID().toString(),
                         provider: QuestProvider,
                         group: QuestGroup,
                         var pokeMatch: PokeMatch = PokeMatch(),
@@ -23,21 +23,35 @@ class CatchPokemonQuest(name: String = "Default Catch Pokemon Quest Title",
                         var amount: Int = 1,
                         var progress: Int = 0
 ) :
-    Quest(name, uuid, provider, group) {
+    Quest(name, id, provider, group) {
 
     companion object : Quest.QuestFactory {
         override fun fromState(json: JsonObject, state: JsonObject, provider: QuestProvider, group: QuestGroup): Quest {
-            val name = json.get("name").asString
-            val uuid = UUID.fromString(json.get("uuid").asString)
+            val name = json.get("name").asString ?: "Default Catch Pokemon Quest Title"
 
-            val pokeMatch = PokeMatch.fromJson(json.get("pokeMatch").asJsonObject)
-            val taskMessage = json.get("taskMessage").asString
+            val id = json.get("id")?.asString ?: UUID.randomUUID().toString()
 
-            val amount = json.get("amount").asInt
+            var pokeMatch = PokeMatch()
+            if (json.has("pokeMatch")) {
+                pokeMatch = PokeMatch.fromJson(json.get("pokeMatch").asJsonObject)
+            }
 
-            val progress = state.get("progress")?.asInt ?: 0
+            var taskMessage = "Catch a pokemon!"
+            if (json.has("taskMessage")) {
+                taskMessage = json.get("taskMessage").asString
+            }
 
-            return CatchPokemonQuest(name, uuid, provider, group, pokeMatch, taskMessage, amount, progress)
+            var amount = 3
+            if (json.has("amount")) {
+                amount = json.get("amount").asInt
+            }
+
+            var progress = 0
+            if (json.has("progress")) {
+                progress = state.get("progress")?.asInt ?: 0
+            }
+
+            return CatchPokemonQuest(name, id, provider, group, pokeMatch, taskMessage, amount, progress)
         }
     }
 

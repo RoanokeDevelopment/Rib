@@ -12,21 +12,21 @@ import java.util.UUID
 
 class HarvestApricornQuest(
     name: String = "Harvest Some Apricorns",
-    uuid: UUID = UUID.randomUUID(),
+    id: String = UUID.randomUUID().toString(),
     provider: QuestProvider,
     group: QuestGroup,
     var apricorn: Apricorn = Apricorn.RED,
     var amount: Int = 3,
     var progress: Int = 0
     ) :
-    Quest(name, uuid, provider, group) {
+    Quest(name, id, provider, group) {
 
     companion object : Quest.QuestFactory {
         override fun fromState(json: JsonObject, state: JsonObject, provider: QuestProvider, group: QuestGroup): Quest {
-            val name = json.get("name").asString
-            val uuid = UUID.fromString(json.get("uuid").asString)
+            val name = json.get("name")?.asString ?: "Default Harvest Apricorn Quest Title"
+            val id = json.get("uuid")?.asString ?: UUID.randomUUID().toString()
 
-            val apricornString = json.get("apricorn").asString
+            val apricornString = json.get("apricorn")?.asString ?: "BLACK"
 
             var apricorn: Apricorn = Apricorn.BLACK
             try {
@@ -35,13 +35,13 @@ class HarvestApricornQuest(
                 Rib.LOGGER.info("Failed to convert Apricorn String in Quest (${apricornString}) to an Apricorn Enum")
             }
 
-            val amount = json.get("amount").asInt
+            val amount = json.get("amount")?.asInt ?: 3
 
             // anything that is stateful goes here
 
             val progress = state.get("progress")?.asInt ?: 0
 
-            return HarvestApricornQuest(name, uuid, provider, group, apricorn, amount, progress)
+            return HarvestApricornQuest(name, id, provider, group, apricorn, amount, progress)
         }
     }
 

@@ -12,19 +12,19 @@ import dev.roanoke.rib.quests.QuestProvider
 import java.util.*
 
 class CraftItemQuest(name: String = "Default Craft Quest Title",
-                     uuid: UUID = UUID.randomUUID(),
+                     id: String = UUID.randomUUID().toString(),
                      provider: QuestProvider,
                      group: QuestGroup,
                      var item: Item,
                      var amount: Int = 3,
                      var progress: Int = 0
 ) :
-    Quest(name, uuid, provider, group) {
+    Quest(name, id, provider, group) {
 
     companion object : Quest.QuestFactory {
         override fun fromState(json: JsonObject, state: JsonObject, provider: QuestProvider, group: QuestGroup): Quest {
-            val name = json.get("name").asString
-            val uuid = UUID.fromString(json.get("uuid").asString)
+            val name = json.get("name")?.asString ?: "Default Craft Quest Title"
+            val id = json.get("uuid")?.asString ?: UUID.randomUUID().toString()
 
             val itemID = json.get("item").asString
             val item: Item = Registries.ITEM.get(Identifier.tryParse(itemID))
@@ -33,7 +33,7 @@ class CraftItemQuest(name: String = "Default Craft Quest Title",
 
             val progress = state.get("progress")?.asInt ?: 0
 
-            return CraftItemQuest(name, uuid, provider, group, item, amount, progress)
+            return CraftItemQuest(name, id, provider, group, item, amount, progress)
         }
     }
 

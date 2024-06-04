@@ -17,7 +17,7 @@ import java.util.UUID
 
 abstract class Quest(
     var name: String = "Default Quest Title",
-    var id: UUID = UUID.randomUUID(),
+    var id: String = UUID.randomUUID().toString(),
     var provider: QuestProvider,
     var group: QuestGroup
 ): QuestLike, ButtonElement {

@@ -15,28 +15,28 @@ import net.minecraft.util.Identifier
 import java.util.*
 
 class BreakBlockQuest(name: String = "Default Quest Title",
-                      uuid: UUID = UUID.randomUUID(),
+                      id: String = UUID.randomUUID().toString(),
                       provider: QuestProvider,
                       group: QuestGroup,
                       var block: Block,
                       var amount: Int = 3,
                       var progress: Int = 0
     ) :
-    Quest(name, uuid, provider, group) {
+    Quest(name, id, provider, group) {
 
     companion object : Quest.QuestFactory {
         override fun fromState(json: JsonObject, state: JsonObject, provider: QuestProvider, group: QuestGroup): Quest {
-            val name = json.get("name").asString
-            val uuid = UUID.fromString(json.get("uuid").asString)
+            val name = json.get("name")?.asString ?: "Default Break Block Quest Title"
+            val id = json.get("id")?.asString ?: UUID.randomUUID().toString()
 
-            val blockString = json.get("block").asString
+            val blockString = json.get("block")?.asString ?: "minecraft:stone"
             val block: Block = Block.getBlockFromItem(Registries.ITEM.get(Identifier.tryParse(blockString)))
 
-            val amount = json.get("amount").asInt
+            val amount = json.get("amount")?.asInt ?: 3
 
             val progress = state.get("progress")?.asInt ?: 0
 
-            return BreakBlockQuest(name, uuid, provider, group, block, amount, progress)
+            return BreakBlockQuest(name, id, provider, group, block, amount, progress)
         }
     }
 
