@@ -24,7 +24,7 @@ class CraftItemQuest(name: String = "Default Craft Quest Title",
     companion object : Quest.QuestFactory {
         override fun fromState(json: JsonObject, state: JsonObject, provider: QuestProvider, group: QuestGroup): Quest {
             val name = json.get("name")?.asString ?: "Default Craft Quest Title"
-            val id = json.get("uuid")?.asString ?: UUID.randomUUID().toString()
+            val id = json.get("id")?.asString ?: UUID.randomUUID().toString()
 
             val itemID = json.get("item").asString
             val item: Item = Registries.ITEM.get(Identifier.tryParse(itemID))
@@ -79,7 +79,7 @@ class CraftItemQuest(name: String = "Default Craft Quest Title",
         val jsonObject = JsonObject()
         jsonObject.addProperty("type", "CraftItemQuest")
         jsonObject.addProperty("name", name)
-        jsonObject.addProperty("uuid", id.toString())
+        jsonObject.addProperty("id", id.toString())
         jsonObject.addProperty("item", Registries.ITEM.getId(item).toString())
         jsonObject.addProperty("amount", amount)
         jsonObject.addProperty("progress", progress)

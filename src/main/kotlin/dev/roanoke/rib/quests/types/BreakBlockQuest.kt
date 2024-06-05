@@ -97,7 +97,7 @@ class BreakBlockQuest(name: String = "Default Quest Title",
         val jsonObject = JsonObject()
         jsonObject.addProperty("type", "BreakBlockQuest")
         jsonObject.addProperty("name", name)
-        jsonObject.addProperty("uuid", id.toString())
+        jsonObject.addProperty("id", id.toString())
         jsonObject.addProperty("block", Registries.ITEM.getId(block.asItem()).toString())
         jsonObject.addProperty("amount", amount)
         jsonObject.addProperty("progress", progress)

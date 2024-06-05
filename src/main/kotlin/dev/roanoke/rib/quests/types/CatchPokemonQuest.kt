@@ -108,7 +108,7 @@ class CatchPokemonQuest(name: String = "Default Catch Pokemon Quest Title",
         val jsonObject = JsonObject()
         jsonObject.addProperty("type", "CatchPokemonQuest")
         jsonObject.addProperty("name", name)
-        jsonObject.addProperty("uuid", id.toString())
+        jsonObject.addProperty("id", id.toString())
 
         jsonObject.add("pokeMatch", pokeMatch.toJson())
         jsonObject.addProperty("taskMessage", taskMessage)

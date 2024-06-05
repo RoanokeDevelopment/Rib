@@ -24,7 +24,7 @@ class HarvestApricornQuest(
     companion object : Quest.QuestFactory {
         override fun fromState(json: JsonObject, state: JsonObject, provider: QuestProvider, group: QuestGroup): Quest {
             val name = json.get("name")?.asString ?: "Default Harvest Apricorn Quest Title"
-            val id = json.get("uuid")?.asString ?: UUID.randomUUID().toString()
+            val id = json.get("id")?.asString ?: UUID.randomUUID().toString()
 
             val apricornString = json.get("apricorn")?.asString ?: "BLACK"
 
@@ -90,7 +90,7 @@ class HarvestApricornQuest(
         val jsonObject = JsonObject()
         jsonObject.addProperty("type", "HarvestApricornQuest")
         jsonObject.addProperty("name", name)
-        jsonObject.addProperty("uuid", id.toString())
+        jsonObject.addProperty("id", id.toString())
         jsonObject.addProperty("apricorn", apricorn.toString())
         jsonObject.addProperty("amount", amount)
         jsonObject.addProperty("progress", progress)
