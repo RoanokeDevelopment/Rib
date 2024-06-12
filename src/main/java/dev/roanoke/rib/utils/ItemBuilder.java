@@ -1,5 +1,7 @@
 package dev.roanoke.rib.utils;
 
+import com.google.gson.JsonObject;
+import dev.roanoke.rib.Rib;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
@@ -13,6 +15,8 @@ import net.minecraft.util.Identifier;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class ItemBuilder {
     ItemStack stack = null;
@@ -27,6 +31,49 @@ public class ItemBuilder {
     public ItemBuilder(String itemId) {
         this.stack = Registries.ITEM.get(Identifier.tryParse(itemId)).getDefaultStack();
     }
+
+public static ItemBuilder fromJson(JsonObject itemData) {
+    if (!itemData.has("id")) {
+        Rib.LOGGER.debug("Failed to load Item from Json: {}", itemData.toString());
+        return null;
+    }
+
+    String id = itemData.get("id").getAsString();
+    var itemBuilder = new ItemBuilder(id);
+
+    if (itemData.has("name")) {
+        try {
+            Text name = Rib.Rib.INSTANCE.parseText(itemData.get("name").getAsString());
+            itemBuilder.setCustomName(name);
+        } catch (Exception e) {
+            Rib.LOGGER.error("Error parsing name for item '{}': {}", id, e.getMessage());
+        }
+    }
+
+    if (itemData.has("customModelData")) {
+        itemBuilder.setCustomModelData(itemData.get("customModelData").getAsInt());
+    }
+
+    if (itemData.has("lore")) {
+        List<Text> loreEntries = itemData.getAsJsonArray("lore").asList().stream()
+            .map(it -> {
+                try {
+                    return Rib.Rib.INSTANCE.parseText(it.getAsString());
+                } catch (Exception e) {
+                    Rib.LOGGER.error("Error parsing lore text: {}", e.getMessage());
+                    return null;
+                }
+            })
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
+
+        if (!loreEntries.isEmpty()) {
+            itemBuilder.addLore(loreEntries);
+        }
+    }
+
+    return itemBuilder;
+}
 
     public String getItemID() {
         return Registries.ITEM.getId(stack.getItem()).toString();
