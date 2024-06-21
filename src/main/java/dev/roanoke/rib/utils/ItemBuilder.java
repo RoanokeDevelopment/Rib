@@ -29,7 +29,11 @@ public class ItemBuilder {
     }
 
     public ItemBuilder(String itemId) {
-        this.stack = Registries.ITEM.get(Identifier.tryParse(itemId)).getDefaultStack();
+        Identifier identifier = Identifier.tryParse(itemId);
+        if (identifier == null) {
+            Rib.LOGGER.error("Failed to parse Item ID: {}", itemId);
+        }
+        this.stack = Registries.ITEM.get(identifier).getDefaultStack();
     }
 
 public static ItemBuilder fromJson(JsonObject itemData) {
@@ -132,5 +136,10 @@ public static ItemBuilder fromJson(JsonObject itemData) {
 
     public ItemStack build() {
         return this.stack;
+    }
+
+    @Override
+    public String toString() {
+        return stack.toString();
     }
 }

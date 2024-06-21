@@ -15,9 +15,13 @@ class CGuiManager(private val guiDirectory: Path, private val itemDefinitions: P
     val items: MutableMap<String, ItemBuilder> = mutableMapOf()
     val guis: MutableList<ConfiguredGUI> = mutableListOf()
 
-    init {
+    fun setup() {
         loadItems()
         loadGUIs()
+    }
+
+    fun getGui(id: String): ConfiguredGUI? {
+        return guis.find { it.id == id }
     }
 
     private fun loadItems() {
