@@ -62,8 +62,12 @@ class ConfiguredGUI(
         return GuiElementBuilder.from(item.build())
     }
 
-    fun getGui(player: ServerPlayerEntity, elements: Map<String, List<GuiElementBuilder>>): SimpleGui {
-        val gui = SimpleGui(GuiType.getScreenHandlerType(guiType), player, false)
+    fun getGui(player: ServerPlayerEntity, elements: Map<String, List<GuiElementBuilder>>, onClose: (ServerPlayerEntity) -> Unit = {}): SimpleGui {
+         val gui = object : SimpleGui(GuiType.getScreenHandlerType(guiType), player, false) {
+            override fun onClose() {
+                onClose(player)
+            }
+        }
 
         Rib.LOGGER.info("Getting GUI: $id")
         Rib.LOGGER.info("$guiList")
