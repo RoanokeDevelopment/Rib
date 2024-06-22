@@ -59,6 +59,11 @@ public class PaginatedSection {
 
     }
 
+    public void setGuiElements(List<GuiElementBuilder> guiElements) {
+        this.guiElements = guiElements;
+        this.currentPage = 1;
+    }
+
     public void incremementPage() {
         int totalPages = (int) Math.ceil((double) this.guiElements.size() / this.getItemsPerPage());
         this.currentPage++;
