@@ -72,20 +72,24 @@ class ConfiguredGUI(
         Rib.LOGGER.info("Getting GUI: $id")
         Rib.LOGGER.info("$guiList")
 
-        var elementIndex = 0;
+        val elementIndex: MutableMap<String, Int> = mutableMapOf();
+        elements.keys.forEach { elementIndex[it] = 0 }
+        keys.keys.forEach { elementIndex[it] = 0 }
+
         for ((index, key) in guiList.withIndex()) {
             Rib.LOGGER.info("\n\nIndex: $index\nKey: $key")
             if (elements.containsKey(key)) {
                 Rib.LOGGER.info("Elements contained key ($key)")
-                if (elements[key]!!.size > elementIndex) {
+                if (elements[key]!!.size > elementIndex[key]!!) {
                     Rib.LOGGER.info("Element size (${elements[key]!!.size}) bigger than element index ($elementIndex)")
-                    gui.setSlot(index, elements[key]!![elementIndex])
-                    elementIndex++
+                    gui.setSlot(index, elements[key]!![elementIndex[key]!!])
+                    elementIndex[key] = elementIndex[key]!! + 1
                     Rib.LOGGER.info("So placing element and increasing index")
                 } else {
                     Rib.LOGGER.info("Element size (${elements[key]!!.size}) NOT bigger than element index ($elementIndex)")
                     // COULD ADD A SEPARATE PLACEHOLDER ITEM VALUE HERE
-                    Rib.LOGGER.info("So placing nothing.")
+                    gui.setSlot(index, getGuiElementFromKey(key))
+                    Rib.LOGGER.info("So placing default fill item (i.e., getting key from item definitions)")
                 }
             } else {
                 Rib.LOGGER.info("Elements didn't contain key ($key), using fallback items")
