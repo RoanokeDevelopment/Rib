@@ -20,8 +20,22 @@ class CGuiManager(private val guiDirectory: Path, private val itemDefinitions: P
         loadGUIs()
     }
 
+    fun reload() {
+        items.clear()
+        guis.clear()
+        setup()
+    }
+
     fun getGui(id: String): ConfiguredGUI? {
         return guis.find { it.id == id }
+    }
+
+    fun getItem(id: String): ItemBuilder? {
+        return items[id]
+    }
+
+    fun getItemOrDefault(id: String, default: ItemBuilder = ItemBuilder("minecraft:dirt")): ItemBuilder {
+        return items.getOrDefault(id, default)
     }
 
     private fun loadItems() {
