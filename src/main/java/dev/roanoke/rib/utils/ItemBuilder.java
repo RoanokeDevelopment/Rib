@@ -2,6 +2,7 @@ package dev.roanoke.rib.utils;
 
 import com.google.gson.JsonObject;
 import dev.roanoke.rib.Rib;
+import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
@@ -136,6 +137,10 @@ public static ItemBuilder fromJson(JsonObject itemData) {
 
     public ItemStack build() {
         return this.stack;
+    }
+
+    public GuiElementBuilder gbuild() {
+        return GuiElementBuilder.from(build());
     }
 
     @Override
