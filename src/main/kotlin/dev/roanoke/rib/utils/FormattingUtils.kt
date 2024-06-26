@@ -7,7 +7,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-class TimeUtils {
+class FormattingUtils {
     companion object {
         fun formatDate(instant: Instant): String {
             val formatter = DateTimeFormatter.ofPattern("d'th' MMMM yyyy")
@@ -30,6 +30,17 @@ class TimeUtils {
                 duration.toMinutes() > 0 -> "${duration.toMinutes()} minutes ago"
                 else -> "Just now"
             }
+        }
+
+        fun getOrdinal(number: Int): String {
+            val suffix = when {
+                number % 100 in 11..13 -> "th"
+                number % 10 == 1 -> "st"
+                number % 10 == 2 -> "nd"
+                number % 10 == 3 -> "rd"
+                else -> "th"
+            }
+            return "$number$suffix"
         }
 
     }
