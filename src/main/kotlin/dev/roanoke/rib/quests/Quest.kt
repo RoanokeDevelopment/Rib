@@ -26,16 +26,56 @@ abstract class Quest(
         return GuiElementBuilder.from(
             ItemBuilder(Items.STONE)
                 .setCustomName(Rib.Rib.parseText(name))
-                .addLore(listOf(
-                    taskAndProgress()
-                )
+                .addLore(getButtonLore()
             ).build()
-        )
+        ).setCallback { _, _, _ ->
+            getButtonCallback().invoke(player)
+        }
     }
 
-    fun executeRewards(player: ServerPlayerEntity) {
+    fun getButtonCallback(): (ServerPlayerEntity) -> Unit {
+        return { player ->
+
+            if (completed()) {
+                if (rewardsClaimed) {
+                    player.sendMessage(Text.literal("These rewards have already been claimed!"))
+                } else {
+                    player.sendMessage(Text.literal("Redeemed Quest Rewards"))
+                    claimRewards(player)
+                }
+            } else {
+                player.sendMessage(Text.literal("You need to actually finish the Quest before you can have your rewards!"))
+            }
+        }
+    }
+
+    fun getButtonLore(): LoreLike {
+        val loreList: MutableList<Text> = mutableListOf()
+
+        loreList.add(taskAndProgress())
+        loreList.add(Text.literal(""))
+
+        rewards.rewards.forEach {
+            loreList.add(Rib.Rib.parseText(it.display))
+        }
+
+        if (completed() && rewards.rewards.isNotEmpty()) {
+            loreList.add(Text.literal(""))
+            if (rewardsClaimed) {
+                loreList.add(Text.literal("Rewards have been claimed."))
+            } else {
+                loreList.add(Text.literal("Left click to claim Rewards!"))
+            }
+        }
+
+        return LoreLike(loreList)
+    }
+
+
+    fun claimRewards(player: ServerPlayerEntity) {
         rewards.executeRewards(player)
         rewardsClaimed = true
+        provider.onRewardsClaimed(this)
     }
 
     protected fun notifyProgress() {

@@ -71,11 +71,11 @@ class HarvestApricornQuest(
         return GuiElementBuilder.from(
             ItemBuilder(apricorn.item().asItem())
                 .setCustomName(Rib.Rib.parseText(name))
-                .addLore(listOf(
-                    taskAndProgress()
-                )
+                .addLore(getButtonLore()
             ).build()
-        )
+        ).setCallback { _, _, _ ->
+            getButtonCallback().invoke(player)
+        }
     }
 
     init {

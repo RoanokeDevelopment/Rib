@@ -64,11 +64,12 @@ class BreakBlockQuest(name: String = "Default Quest Title",
         return GuiElementBuilder.from(
             ItemBuilder(block.asItem())
                 .setCustomName(Rib.Rib.parseText(name))
-                .addLore(listOf(
-                    taskAndProgress()
-                )
+                .addLore(
+                    getButtonLore()
             ).build()
-        )
+        ).setCallback { _, _, _ ->
+            getButtonCallback().invoke(player)
+        }
     }
 
     init {

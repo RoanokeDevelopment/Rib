@@ -65,11 +65,11 @@ class CraftItemQuest(name: String = "Default Craft Quest Title",
         return GuiElementBuilder.from(
             ItemBuilder(item)
                 .setCustomName(Rib.Rib.parseText(name))
-                .addLore(listOf(
-                    taskAndProgress()
-                )
+                .addLore(getButtonLore()
             ).build()
-        )
+        ).setCallback { _, _, _ ->
+            getButtonCallback().invoke(player)
+        }
     }
 
     init {

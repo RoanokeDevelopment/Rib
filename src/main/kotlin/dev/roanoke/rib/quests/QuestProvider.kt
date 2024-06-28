@@ -13,6 +13,8 @@ interface QuestProvider {
 
     fun onQuestComplete(quest: QuestLike)
 
+    fun onRewardsClaimed(quest: QuestLike)
+
     fun isQuestActive(quest: QuestLike): Boolean
 
 }

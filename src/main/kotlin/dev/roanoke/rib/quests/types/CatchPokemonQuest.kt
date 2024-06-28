@@ -95,11 +95,11 @@ class CatchPokemonQuest(name: String = "Default Catch Pokemon Quest Title",
         return GuiElementBuilder.from(
             ItemBuilder(pokeMatch.getPokemonItem())
                 .setCustomName(Rib.Rib.parseText(name))
-                .addLore(listOf(
-                    taskAndProgress()
-                )
+                .addLore(getButtonLore()
             ).build()
-        )
+        ).setCallback { _, _, _ ->
+            getButtonCallback().invoke(player)
+        }
     }
 
     override fun completed(): Boolean {
