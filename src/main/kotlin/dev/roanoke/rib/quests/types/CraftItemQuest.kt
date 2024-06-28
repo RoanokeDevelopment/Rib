@@ -1,6 +1,7 @@
 package dev.roanoke.rib.quests.types
 
 import com.google.gson.JsonObject
+import dev.roanoke.rib.Rib
 import dev.roanoke.rib.callbacks.ItemCraftedCallback
 import net.minecraft.item.Item
 import net.minecraft.registry.Registries
@@ -9,6 +10,9 @@ import net.minecraft.util.Identifier
 import dev.roanoke.rib.quests.Quest
 import dev.roanoke.rib.quests.QuestGroup
 import dev.roanoke.rib.quests.QuestProvider
+import dev.roanoke.rib.utils.ItemBuilder
+import eu.pb4.sgui.api.elements.GuiElementBuilder
+import net.minecraft.server.network.ServerPlayerEntity
 import java.util.*
 
 class CraftItemQuest(name: String = "Default Craft Quest Title",
@@ -45,6 +49,17 @@ class CraftItemQuest(name: String = "Default Craft Quest Title",
 
     override fun applyState(state: JsonObject) {
         progress = state.get("progress")?.asInt ?: progress
+    }
+
+    override fun getButton(player: ServerPlayerEntity): GuiElementBuilder {
+        return GuiElementBuilder.from(
+            ItemBuilder(item)
+                .setCustomName(Rib.Rib.parseText(name))
+                .addLore(listOf(
+                    taskAndProgress()
+                )
+            ).build()
+        )
     }
 
     init {

@@ -1,6 +1,7 @@
 package dev.roanoke.rib.quests.types
 
 import com.google.gson.JsonObject
+import dev.roanoke.rib.Rib
 import dev.roanoke.rib.quests.Quest
 import dev.roanoke.rib.quests.QuestGroup
 import dev.roanoke.rib.quests.QuestProvider
@@ -53,9 +54,9 @@ class BreakBlockQuest(name: String = "Default Quest Title",
     override fun getButton(player: ServerPlayerEntity): GuiElementBuilder {
         return GuiElementBuilder.from(
             ItemBuilder(block.asItem())
+                .setCustomName(Rib.Rib.parseText(name))
                 .addLore(listOf(
-                    taskMessage(),
-                    progressMessage()
+                    taskAndProgress()
                 )
             ).build()
         )

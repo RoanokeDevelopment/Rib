@@ -24,8 +24,7 @@ abstract class Quest(
             ItemBuilder(Items.STONE)
                 .setCustomName(Rib.Rib.parseText(name))
                 .addLore(listOf(
-                    taskMessage(),
-                    progressMessage()
+                    taskAndProgress()
                 )
             ).build()
         )
@@ -56,6 +55,10 @@ abstract class Quest(
     abstract fun taskMessage(): Text
 
     abstract fun progressMessage(): Text
+
+    override fun taskAndProgress(): Text {
+        return taskMessage().copy().append(Text.literal(" ")).append(progressMessage())
+    }
 
     abstract fun getState(): JsonObject
 

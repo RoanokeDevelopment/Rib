@@ -86,7 +86,7 @@ class CatchPokemonQuest(name: String = "Default Catch Pokemon Quest Title",
             ItemBuilder(pokeMatch.getPokemonItem())
                 .setCustomName(Rib.Rib.parseText(name))
                 .addLore(listOf(
-                    progressMessage()
+                    taskAndProgress()
                 )
             ).build()
         )

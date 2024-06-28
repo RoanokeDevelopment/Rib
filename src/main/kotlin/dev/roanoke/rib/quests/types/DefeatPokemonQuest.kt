@@ -90,7 +90,7 @@ class DefeatPokemonQuest(name: String = "Default Defeat Pokemon Quest Title",
             ItemBuilder(pokeMatch.getPokemonItem())
                 .setCustomName(Rib.Rib.parseText(name))
                 .addLore(listOf(
-                    progressMessage()
+                    taskAndProgress()
                 )
             ).build()
         )

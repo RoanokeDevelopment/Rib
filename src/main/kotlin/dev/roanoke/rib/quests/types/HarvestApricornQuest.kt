@@ -8,6 +8,9 @@ import net.minecraft.text.Text
 import dev.roanoke.rib.quests.Quest
 import dev.roanoke.rib.quests.QuestGroup
 import dev.roanoke.rib.quests.QuestProvider
+import dev.roanoke.rib.utils.ItemBuilder
+import eu.pb4.sgui.api.elements.GuiElementBuilder
+import net.minecraft.server.network.ServerPlayerEntity
 import java.util.UUID
 
 class HarvestApricornQuest(
@@ -53,6 +56,17 @@ class HarvestApricornQuest(
 
     override fun applyState(state: JsonObject) {
         progress = state.get("progress")?.asInt ?: progress
+    }
+
+    override fun getButton(player: ServerPlayerEntity): GuiElementBuilder {
+        return GuiElementBuilder.from(
+            ItemBuilder(apricorn.item().asItem())
+                .setCustomName(Rib.Rib.parseText(name))
+                .addLore(listOf(
+                    taskAndProgress()
+                )
+            ).build()
+        )
     }
 
     init {
