@@ -4,6 +4,7 @@ import com.google.gson.JsonObject
 import dev.roanoke.rib.Rib
 import dev.roanoke.rib.gui.ButtonElement
 import dev.roanoke.rib.quests.types.*
+import dev.roanoke.rib.rewards.RewardList
 import dev.roanoke.rib.utils.ItemBuilder
 import dev.roanoke.rib.utils.LoreLike
 import eu.pb4.sgui.api.elements.GuiElementBuilder
@@ -16,7 +17,9 @@ abstract class Quest(
     var name: String = "Default Quest Title",
     var id: String = UUID.randomUUID().toString(),
     var provider: QuestProvider,
-    var group: QuestGroup
+    var group: QuestGroup,
+    var rewards: RewardList = RewardList(),
+    var rewardsClaimed: Boolean = false
 ): QuestLike, ButtonElement {
 
     override fun getButton(player: ServerPlayerEntity): GuiElementBuilder {
@@ -28,6 +31,11 @@ abstract class Quest(
                 )
             ).build()
         )
+    }
+
+    fun executeRewards(player: ServerPlayerEntity) {
+        rewards.executeRewards(player)
+        rewardsClaimed = true
     }
 
     protected fun notifyProgress() {

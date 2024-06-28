@@ -7,6 +7,7 @@ import dev.roanoke.rib.cobblemon.PokeMatch
 import dev.roanoke.rib.quests.Quest
 import dev.roanoke.rib.quests.QuestGroup
 import dev.roanoke.rib.quests.QuestProvider
+import dev.roanoke.rib.rewards.RewardList
 import dev.roanoke.rib.utils.ItemBuilder
 import eu.pb4.sgui.api.elements.GuiElementBuilder
 import net.minecraft.server.network.ServerPlayerEntity
@@ -45,23 +46,32 @@ class DefeatPokemonQuest(name: String = "Default Defeat Pokemon Quest Title",
                 amount = json.get("amount").asInt
             }
 
+            val rRewards = RewardList.fromJson(json.get("rewards"))
+
+            val rRewardsClaimed = state.get("rewardsClaimed")?.asBoolean ?: false
+
             var progress = 0
             if (state.has("progress")) {
                 progress = state.get("progress")?.asInt ?: 0
             }
 
-            return DefeatPokemonQuest(name, id, provider, group, pokeMatch, taskMessage, amount, progress)
+            return DefeatPokemonQuest(name, id, provider, group, pokeMatch, taskMessage, amount, progress).apply {
+                rewards = rRewards;
+                rewardsClaimed = rRewardsClaimed
+            }
         }
     }
 
     override fun getState(): JsonObject {
         return JsonObject().apply {
             addProperty("progress", progress)
+            addProperty("rewardsClaimed", rewardsClaimed)
         }
     }
 
     override fun applyState(state: JsonObject) {
         progress = state.get("progress")?.asInt ?: progress
+        rewardsClaimed = state.get("rewardsClaimed")?.asBoolean ?: rewardsClaimed
     }
 
     init {
@@ -105,7 +115,7 @@ class DefeatPokemonQuest(name: String = "Default Defeat Pokemon Quest Title",
     }
 
     override fun progressMessage(): Text {
-        return Text.literal("$taskMessage (${progress}/${amount})")
+        return Text.literal("(${progress}/${amount})")
     }
 
     override fun saveState(): JsonObject {

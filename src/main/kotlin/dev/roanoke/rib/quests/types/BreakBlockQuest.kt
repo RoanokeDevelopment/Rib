@@ -5,6 +5,7 @@ import dev.roanoke.rib.Rib
 import dev.roanoke.rib.quests.Quest
 import dev.roanoke.rib.quests.QuestGroup
 import dev.roanoke.rib.quests.QuestProvider
+import dev.roanoke.rib.rewards.RewardList
 import dev.roanoke.rib.utils.ItemBuilder
 import eu.pb4.sgui.api.elements.GuiElementBuilder
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents
@@ -21,7 +22,7 @@ class BreakBlockQuest(name: String = "Default Quest Title",
                       group: QuestGroup,
                       var block: Block,
                       var amount: Int = 3,
-                      var progress: Int = 0
+                      var progress: Int = 0,
     ) :
     Quest(name, id, provider, group) {
 
@@ -35,20 +36,28 @@ class BreakBlockQuest(name: String = "Default Quest Title",
 
             val amount = json.get("amount")?.asInt ?: 3
 
+            val rRewards = RewardList.fromJson(json.get("rewards"))
+
+            val rRewardsClaimed = state.get("rewardsClaimed")?.asBoolean ?: false
             val progress = state.get("progress")?.asInt ?: 0
 
-            return BreakBlockQuest(name, id, provider, group, block, amount, progress)
+            return BreakBlockQuest(name, id, provider, group, block, amount, progress).apply {
+                rewards = rRewards;
+                rewardsClaimed = rRewardsClaimed
+            }
         }
     }
 
     override fun getState(): JsonObject {
         return JsonObject().apply {
             addProperty("progress", progress)
+            addProperty("rewardsClaimed", rewardsClaimed)
         }
     }
 
     override fun applyState(state: JsonObject) {
         progress = state.get("progress")?.asInt ?: progress
+        rewardsClaimed = state.get("rewardsClaimed")?.asBoolean ?: rewardsClaimed
     }
 
     override fun getButton(player: ServerPlayerEntity): GuiElementBuilder {
@@ -91,7 +100,7 @@ class BreakBlockQuest(name: String = "Default Quest Title",
     }
 
     override fun progressMessage(): Text {
-        return Text.literal("${progress} / ${amount}")
+        return Text.literal("(${progress}/${amount})")
     }
 
     override fun saveState(): JsonObject {

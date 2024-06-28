@@ -8,6 +8,7 @@ import net.minecraft.text.Text
 import dev.roanoke.rib.quests.Quest
 import dev.roanoke.rib.quests.QuestGroup
 import dev.roanoke.rib.quests.QuestProvider
+import dev.roanoke.rib.rewards.RewardList
 import dev.roanoke.rib.utils.ItemBuilder
 import eu.pb4.sgui.api.elements.GuiElementBuilder
 import net.minecraft.server.network.ServerPlayerEntity
@@ -39,23 +40,31 @@ class HarvestApricornQuest(
             }
 
             val amount = json.get("amount")?.asInt ?: 3
+            val rRewards = RewardList.fromJson(json.get("rewards"))
 
             // anything that is stateful goes here
 
+            val rRewardsClaimed = state.get("rewardsClaimed")?.asBoolean ?: false
+
             val progress = state.get("progress")?.asInt ?: 0
 
-            return HarvestApricornQuest(name, id, provider, group, apricorn, amount, progress)
+            return HarvestApricornQuest(name, id, provider, group, apricorn, amount, progress).apply {
+                rewards = rRewards;
+                rewardsClaimed = rRewardsClaimed
+            }
         }
     }
 
     override fun getState(): JsonObject {
         return JsonObject().apply {
             addProperty("progress", progress)
+            addProperty("rewardsClaimed", rewardsClaimed)
         }
     }
 
     override fun applyState(state: JsonObject) {
         progress = state.get("progress")?.asInt ?: progress
+        rewardsClaimed = state.get("rewardsClaimed")?.asBoolean ?: rewardsClaimed
     }
 
     override fun getButton(player: ServerPlayerEntity): GuiElementBuilder {
@@ -97,7 +106,7 @@ class HarvestApricornQuest(
     }
 
     override fun progressMessage(): Text {
-        return Text.literal("${progress} / ${amount}")
+        return Text.literal("(${progress}/${amount})")
     }
 
     override fun saveState(): JsonObject {
