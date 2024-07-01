@@ -56,7 +56,9 @@ abstract class Quest(
         loreList.add(taskAndProgress())
         loreList.add(Text.literal(""))
 
-        loreList.add(Rib.Rib.parseText("<gold><bold>Rewards"))
+        if (rewards.rewards.isNotEmpty()) {
+            loreList.add(Rib.Rib.parseText("<gold><bold>Rewards"))
+        }
         rewards.rewards.forEach {
             loreList.add(Rib.Rib.parseText("- " + it.display))
         }
@@ -138,6 +140,7 @@ abstract class Quest(
                 "CatchPokemonQuest" -> CatchPokemonQuest.fromState(json, state, provider, group)
                 "HarvestApricornQuest" -> HarvestApricornQuest.fromState(json, state, provider, group)
                 "DefeatPokemonQuest" -> DefeatPokemonQuest.fromState(json, state, provider, group)
+                "IntPlaceholderQuest" -> IntPlaceholderQuest.fromState(json, state, provider, group)
                 else -> throw IllegalArgumentException("Unsupported quest type: $type")
             }
         }
