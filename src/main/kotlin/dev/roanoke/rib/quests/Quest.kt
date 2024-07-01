@@ -52,11 +52,13 @@ abstract class Quest(
     fun getButtonLore(): LoreLike {
         val loreList: MutableList<Text> = mutableListOf()
 
+        loreList.add(Text.literal(""))
         loreList.add(taskAndProgress())
         loreList.add(Text.literal(""))
 
+        loreList.add(Rib.Rib.parseText("<gold><bold>Rewards"))
         rewards.rewards.forEach {
-            loreList.add(Rib.Rib.parseText(it.display))
+            loreList.add(Rib.Rib.parseText("- " + it.display))
         }
 
         if (completed() && rewards.rewards.isNotEmpty()) {
