@@ -8,6 +8,8 @@ import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.screen.ScreenHandlerType;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import dev.roanoke.rib.Rib;
@@ -24,6 +26,12 @@ public class GuiUtils {
             gui.setSlot(freeslot, GuiElementBuilder.from(BLACK_STAINED_GLASS_PANE.getDefaultStack().setCustomName(Text.literal(""))));
             freeslot = gui.getFirstEmptySlot();
         }
+    }
+
+    public static void closeGUIs(ServerPlayerEntity player) {
+        SimpleGui gui = new SimpleGui(ScreenHandlerType.GENERIC_3X3, player, false);
+        gui.open();
+        gui.close();
     }
 
     public static ItemStack getPokemonGuiElement(Pokemon pokemon) {
