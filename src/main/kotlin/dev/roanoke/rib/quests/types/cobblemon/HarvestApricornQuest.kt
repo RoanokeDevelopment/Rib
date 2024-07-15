@@ -88,10 +88,6 @@ class HarvestApricornQuest(
                 if (it.apricorn == this.apricorn) {
                     progress += 1
                     this.notifyProgress()
-
-                    if (completed()) {
-                        this.notifyCompletion()
-                    }
                 }
             }
         }

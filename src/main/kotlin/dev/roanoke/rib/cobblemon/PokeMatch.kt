@@ -3,53 +3,67 @@ package dev.roanoke.rib.cobblemon
 import com.cobblemon.mod.common.api.pokemon.PokemonProperties
 import com.cobblemon.mod.common.item.PokemonItem
 import com.cobblemon.mod.common.pokemon.Pokemon
-import com.google.gson.JsonObject
 import dev.roanoke.rib.Rib
+import dev.roanoke.rib.cereal.JsonConv
+import kotlinx.serialization.json.*
 import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
 
 class PokeMatch(
-    val species: String = "any",
-    val form: String = "any"
+    val species: String = "",
+    val form: String = "",
+    val shiny: Boolean? = null
 ) {
 
     companion object {
         fun fromJson(json: JsonObject): PokeMatch {
-            var species = "any"
-            if (json.has("species")) {
-                species = json.get("species").asString
-            }
 
-            var form = "any"
-            if (json.has("form")) {
-                form = json.get("form").asString
-            }
+            val species = json["species"]?.jsonPrimitive?.contentOrNull ?: ""
+            val form = json["form"]?.jsonPrimitive?.contentOrNull ?: ""
+            val shiny = json["shiny"]?.jsonPrimitive?.boolean
 
-            return PokeMatch(species, form)
+            return PokeMatch(
+                species = species,
+                form = form,
+                shiny = shiny
+            )
+        }
+
+        fun fromJson(json: com.google.gson.JsonObject): PokeMatch {
+            return fromJson(JsonConv.gsonToKotlinJson(json))
         }
     }
 
     fun getPokemonItem(): ItemStack {
         var properties: String = "random"
-        if (species != "any") {
+        if (species != "") {
             properties = species.split(":")[1]
-            if (form != "any") {
+            if (form != "") {
                 properties += " $form"
             }
         }
 
-        Rib.LOGGER.info("Being parsed: [$properties]")
+        shiny?.let {
+            properties += " shiny=${shiny.toString().lowercase()}"
+        }
+
         return PokemonItem.from(PokemonProperties.parse(properties, " ", "=").create())
     }
 
     fun matches(pokemon: Pokemon): Boolean {
 
-        if (species != "any") {
+        if (species != "") {
             if (pokemon.species.resourceIdentifier.toString() != species) return false
         }
 
-        if (form != "any") {
+        if (form != "") {
             if (pokemon.form.name.lowercase() != form) return false
+        }
+
+        shiny?.let {
+            if (pokemon.shiny == shiny) {
+                return true
+            }
         }
 
         return true
@@ -57,9 +71,12 @@ class PokeMatch(
     }
 
     fun toJson(): JsonObject {
-        val jsonObject = JsonObject()
-        jsonObject.addProperty("species", species)
-        jsonObject.addProperty("form", form)
-        return jsonObject
+        val match: MutableMap<String, JsonElement> = mutableMapOf()
+        match["species"] = JsonPrimitive(species)
+        match["form"] = JsonPrimitive(form)
+        shiny?.let {
+            match["shiny"] = JsonPrimitive(shiny)
+        }
+        return JsonObject(match)
     }
 }

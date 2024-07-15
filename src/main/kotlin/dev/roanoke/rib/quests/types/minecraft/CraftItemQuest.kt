@@ -80,9 +80,6 @@ class CraftItemQuest(name: String = "Default Craft Quest Title",
                 if (itemStack.isOf(this.item)) {
                     this.progress += amount
                     this.notifyProgress()
-                    if (completed()) {
-                        this.notifyCompletion()
-                    }
                 }
             }
         }

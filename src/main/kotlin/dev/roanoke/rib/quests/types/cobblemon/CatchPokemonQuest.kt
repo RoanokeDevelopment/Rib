@@ -83,9 +83,6 @@ class CatchPokemonQuest(name: String = "Default Catch Pokemon Quest Title",
             if (group.includesPlayer(it.player) && pokeMatch.matches(it.pokemon)) {
                 progress += 1
                 this.notifyProgress()
-                if (completed()) {
-                    this.notifyCompletion()
-                }
             }
         }
     }

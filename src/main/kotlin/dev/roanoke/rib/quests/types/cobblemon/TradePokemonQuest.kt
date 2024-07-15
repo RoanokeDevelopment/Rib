@@ -14,34 +14,40 @@ import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.Text
 import java.util.*
 
-class DefeatPokemonQuest(name: String = "Default Defeat Pokemon Quest Title",
-                         id: String = UUID.randomUUID().toString(),
-                         provider: QuestProvider,
-                         group: QuestGroup,
-                         var pokeMatch: PokeMatch = PokeMatch(),
-                         var taskMessage: String = "Defeat a Pokemon in Battle!",
-                         var amount: Int = 1,
-                         var progress: Int = 0
+class TradePokemonQuest(name: String = "Trade Pokemon Quest",
+                        id: String = UUID.randomUUID().toString(),
+                        provider: QuestProvider,
+                        group: QuestGroup,
+                        var sentPokemon: PokeMatch = PokeMatch(),
+                        var recievedPokemon: PokeMatch = PokeMatch(),
+                        var taskMessage: String = "Trade a Pokemon!",
+                        var amount: Int = 1,
+                        var progress: Int = 0
 ) :
     Quest(name, id, provider, group) {
 
     companion object : Quest.QuestFactory {
         override fun fromState(json: JsonObject, state: JsonObject, provider: QuestProvider, group: QuestGroup): Quest {
-            val name = json.get("name").asString ?: "Default Defeat Pokemon Quest Title"
+            val name = json.get("name").asString ?: "Trade Pokemon Quest"
 
             val id = json.get("id")?.asString ?: UUID.randomUUID().toString()
 
-            var pokeMatch = PokeMatch()
-            if (json.has("pokeMatch")) {
-                pokeMatch = PokeMatch.fromJson(json.get("pokeMatch").asJsonObject)
+            var sentPokemon = PokeMatch()
+            if (json.has("sentPokemon")) {
+                sentPokemon = PokeMatch.fromJson(json.get("sentPokemon").asJsonObject)
             }
 
-            var taskMessage = "Defeat a Pokemon!"
+            var recievedPokemon = PokeMatch()
+            if (json.has("recievedPokemon")) {
+                sentPokemon = PokeMatch.fromJson(json.get("recievedPokemon").asJsonObject)
+            }
+
+            var taskMessage = "Trade a Pokemon!"
             if (json.has("taskMessage")) {
                 taskMessage = json.get("taskMessage").asString
             }
 
-            var amount = 3
+            var amount = 1
             if (json.has("amount")) {
                 amount = json.get("amount").asInt
             }
@@ -51,13 +57,17 @@ class DefeatPokemonQuest(name: String = "Default Defeat Pokemon Quest Title",
             val rRewardsClaimed = state.get("rewardsClaimed")?.asBoolean ?: false
 
             var progress = 0
-            if (state.has("progress")) {
+            if (json.has("progress")) {
                 progress = state.get("progress")?.asInt ?: 0
             }
 
-            return DefeatPokemonQuest(name, id, provider, group, pokeMatch, taskMessage, amount, progress).apply {
-                rewards = rRewards;
-                rewardsClaimed = rRewardsClaimed
+            return TradePokemonQuest(
+                name, id, provider, group,
+                sentPokemon = sentPokemon, recievedPokemon = recievedPokemon,
+                taskMessage, amount, progress)
+                .apply {
+                    rewards = rRewards;
+                    rewardsClaimed = rRewardsClaimed
             }
         }
     }
@@ -75,26 +85,33 @@ class DefeatPokemonQuest(name: String = "Default Defeat Pokemon Quest Title",
     }
 
     init {
-        CobblemonEvents.BATTLE_FAINTED.subscribe {
-
-            if (!isActive() || !it.battle.isPvW) {
+        CobblemonEvents.TRADE_COMPLETED.subscribe {
+            if (!isActive()) {
                 return@subscribe
             }
 
-            if (!it.battle.players.any { p -> group.includesPlayer(p) }) {
-                return@subscribe
+            if (group.includesPlayer(it.tradeParticipant1.uuid)) {
+                if (sentPokemon.matches(it.tradeParticipant1Pokemon)
+                    && recievedPokemon.matches(it.tradeParticipant2Pokemon)) {
+                    progress += 1
+                    this.notifyProgress()
+                }
             }
 
-            if (it.killed.originalPokemon.isWild() && pokeMatch.matches(it.killed.originalPokemon)) {
-                progress += 1
-                this.notifyProgress()
+            if (group.includesPlayer(it.tradeParticipant2.uuid)) {
+                if (sentPokemon.matches(it.tradeParticipant2Pokemon)
+                    && recievedPokemon.matches(it.tradeParticipant1Pokemon)) {
+                    progress += 1
+                    this.notifyProgress()
+                }
             }
+
         }
     }
 
     override fun getButton(player: ServerPlayerEntity): GuiElementBuilder {
         return GuiElementBuilder.from(
-            ItemBuilder(pokeMatch.getPokemonItem())
+            ItemBuilder(sentPokemon.getPokemonItem())
                 .setCustomName(Rib.Rib.parseText(name))
                 .addLore(getButtonLore()
             ).build()

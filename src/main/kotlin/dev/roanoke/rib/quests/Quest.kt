@@ -90,12 +90,13 @@ abstract class Quest(
 
     protected fun notifyProgress() {
         provider.onQuestProgress(this)
+        if (completed()) {
+            notifyCompletion()
+        }
     }
 
     protected fun notifyCompletion() {
-        if (completed()) {
-            provider.onQuestComplete(this)
-        }
+        provider.onQuestComplete(this)
     }
 
     override fun description(): LoreLike {

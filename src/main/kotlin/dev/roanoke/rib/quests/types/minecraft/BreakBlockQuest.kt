@@ -81,11 +81,6 @@ class BreakBlockQuest(name: String = "Default Quest Title",
                 if (state.block.equals(block)) {
                     progress++
                     this.notifyProgress()
-
-                    if (completed()) {
-                        this.notifyCompletion()
-                    }
-
                 }
             }
 
