@@ -1,54 +1,47 @@
-package dev.roanoke.rib.quests.types
+package dev.roanoke.rib.quests.types.minecraft
 
-import com.cobblemon.mod.common.api.apricorn.Apricorn
-import com.cobblemon.mod.common.api.events.CobblemonEvents
 import com.google.gson.JsonObject
 import dev.roanoke.rib.Rib
-import net.minecraft.text.Text
 import dev.roanoke.rib.quests.Quest
 import dev.roanoke.rib.quests.QuestGroup
 import dev.roanoke.rib.quests.QuestProvider
 import dev.roanoke.rib.rewards.RewardList
 import dev.roanoke.rib.utils.ItemBuilder
 import eu.pb4.sgui.api.elements.GuiElementBuilder
+import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents
+import net.minecraft.block.Block
+import net.minecraft.registry.Registries
 import net.minecraft.server.network.ServerPlayerEntity
-import java.util.UUID
+import net.minecraft.text.Text
+import net.minecraft.util.Identifier
+import java.util.*
 
-class HarvestApricornQuest(
-    name: String = "Harvest Some Apricorns",
-    id: String = UUID.randomUUID().toString(),
-    provider: QuestProvider,
-    group: QuestGroup,
-    var apricorn: Apricorn = Apricorn.RED,
-    var amount: Int = 3,
-    var progress: Int = 0
+class BreakBlockQuest(name: String = "Default Quest Title",
+                      id: String = UUID.randomUUID().toString(),
+                      provider: QuestProvider,
+                      group: QuestGroup,
+                      var block: Block,
+                      var amount: Int = 3,
+                      var progress: Int = 0,
     ) :
     Quest(name, id, provider, group) {
 
     companion object : Quest.QuestFactory {
         override fun fromState(json: JsonObject, state: JsonObject, provider: QuestProvider, group: QuestGroup): Quest {
-            val name = json.get("name")?.asString ?: "Default Harvest Apricorn Quest Title"
+            val name = json.get("name")?.asString ?: "Default Break Block Quest Title"
             val id = json.get("id")?.asString ?: UUID.randomUUID().toString()
 
-            val apricornString = json.get("apricorn")?.asString ?: "BLACK"
-
-            var apricorn: Apricorn = Apricorn.BLACK
-            try {
-                apricorn = Apricorn.valueOf(apricornString.uppercase())
-            } catch (e: IllegalArgumentException) {
-                Rib.LOGGER.info("Failed to convert Apricorn String in Quest (${apricornString}) to an Apricorn Enum")
-            }
+            val blockString = json.get("block")?.asString ?: "minecraft:stone"
+            val block: Block = Block.getBlockFromItem(Registries.ITEM.get(Identifier.tryParse(blockString)))
 
             val amount = json.get("amount")?.asInt ?: 3
+
             val rRewards = RewardList.fromJson(json.get("rewards"))
 
-            // anything that is stateful goes here
-
             val rRewardsClaimed = state.get("rewardsClaimed")?.asBoolean ?: false
-
             val progress = state.get("progress")?.asInt ?: 0
 
-            return HarvestApricornQuest(name, id, provider, group, apricorn, amount, progress).apply {
+            return BreakBlockQuest(name, id, provider, group, block, amount, progress).apply {
                 rewards = rRewards;
                 rewardsClaimed = rRewardsClaimed
             }
@@ -69,9 +62,10 @@ class HarvestApricornQuest(
 
     override fun getButton(player: ServerPlayerEntity): GuiElementBuilder {
         return GuiElementBuilder.from(
-            ItemBuilder(apricorn.item().asItem())
+            ItemBuilder(block.asItem())
                 .setCustomName(Rib.Rib.parseText(name))
-                .addLore(getButtonLore()
+                .addLore(
+                    getButtonLore()
             ).build()
         ).setCallback { _, _, _ ->
             getButtonCallback().invoke(player)
@@ -79,21 +73,22 @@ class HarvestApricornQuest(
     }
 
     init {
-        CobblemonEvents.APRICORN_HARVESTED.subscribe {
-            if (!isActive()) {
-                return@subscribe
-            }
+        PlayerBlockBreakEvents.AFTER.register { world, player, pos, state, entity ->
 
-            if (group.includesPlayer(it.player)) {
-                if (it.apricorn == this.apricorn) {
-                    progress += 1
+            if (!isActive()) { return@register }
+
+            if (group.includesPlayer(player as ServerPlayerEntity)) {
+                if (state.block.equals(block)) {
+                    progress++
                     this.notifyProgress()
 
                     if (completed()) {
                         this.notifyCompletion()
                     }
+
                 }
             }
+
         }
     }
 
@@ -102,21 +97,11 @@ class HarvestApricornQuest(
     }
 
     override fun taskMessage(): Text {
-        return Text.literal("Harvest ${amount}x ${apricorn.name.lowercase().capitalize()} Apricorns")
+        return Text.literal("Mine ${amount}x ").append(block.name).append("s")
     }
 
     override fun progressMessage(): Text {
         return Text.literal("(${progress}/${amount})")
     }
 
-    override fun saveState(): JsonObject {
-        val jsonObject = JsonObject()
-        jsonObject.addProperty("type", "HarvestApricornQuest")
-        jsonObject.addProperty("name", name)
-        jsonObject.addProperty("id", id.toString())
-        jsonObject.addProperty("apricorn", apricorn.toString())
-        jsonObject.addProperty("amount", amount)
-        jsonObject.addProperty("progress", progress)
-        return jsonObject
-    }
 }

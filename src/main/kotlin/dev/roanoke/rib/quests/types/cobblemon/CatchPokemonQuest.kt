@@ -1,9 +1,10 @@
-package dev.roanoke.rib.quests.types
+package dev.roanoke.rib.quests.types.cobblemon
 
 import com.cobblemon.mod.common.api.events.CobblemonEvents
 import com.google.gson.JsonObject
 import dev.roanoke.rib.Rib
 import dev.roanoke.rib.cobblemon.PokeMatch
+import net.minecraft.text.Text
 import dev.roanoke.rib.quests.Quest
 import dev.roanoke.rib.quests.QuestGroup
 import dev.roanoke.rib.quests.QuestProvider
@@ -11,23 +12,22 @@ import dev.roanoke.rib.rewards.RewardList
 import dev.roanoke.rib.utils.ItemBuilder
 import eu.pb4.sgui.api.elements.GuiElementBuilder
 import net.minecraft.server.network.ServerPlayerEntity
-import net.minecraft.text.Text
 import java.util.*
 
-class DefeatPokemonQuest(name: String = "Default Defeat Pokemon Quest Title",
-                         id: String = UUID.randomUUID().toString(),
-                         provider: QuestProvider,
-                         group: QuestGroup,
-                         var pokeMatch: PokeMatch = PokeMatch(),
-                         var taskMessage: String = "Defeat a Pokemon in Battle!",
-                         var amount: Int = 1,
-                         var progress: Int = 0
+class CatchPokemonQuest(name: String = "Default Catch Pokemon Quest Title",
+                        id: String = UUID.randomUUID().toString(),
+                        provider: QuestProvider,
+                        group: QuestGroup,
+                        var pokeMatch: PokeMatch = PokeMatch(),
+                        var taskMessage: String = "Catch a Pokemon!",
+                        var amount: Int = 1,
+                        var progress: Int = 0
 ) :
     Quest(name, id, provider, group) {
 
     companion object : Quest.QuestFactory {
         override fun fromState(json: JsonObject, state: JsonObject, provider: QuestProvider, group: QuestGroup): Quest {
-            val name = json.get("name").asString ?: "Default Defeat Pokemon Quest Title"
+            val name = json.get("name").asString ?: "Default Catch Pokemon Quest Title"
 
             val id = json.get("id")?.asString ?: UUID.randomUUID().toString()
 
@@ -36,7 +36,7 @@ class DefeatPokemonQuest(name: String = "Default Defeat Pokemon Quest Title",
                 pokeMatch = PokeMatch.fromJson(json.get("pokeMatch").asJsonObject)
             }
 
-            var taskMessage = "Defeat a Pokemon!"
+            var taskMessage = "Catch a pokemon!"
             if (json.has("taskMessage")) {
                 taskMessage = json.get("taskMessage").asString
             }
@@ -51,11 +51,11 @@ class DefeatPokemonQuest(name: String = "Default Defeat Pokemon Quest Title",
             val rRewardsClaimed = state.get("rewardsClaimed")?.asBoolean ?: false
 
             var progress = 0
-            if (state.has("progress")) {
+            if (json.has("progress")) {
                 progress = state.get("progress")?.asInt ?: 0
             }
 
-            return DefeatPokemonQuest(name, id, provider, group, pokeMatch, taskMessage, amount, progress).apply {
+            return CatchPokemonQuest(name, id, provider, group, pokeMatch, taskMessage, amount, progress).apply {
                 rewards = rRewards;
                 rewardsClaimed = rRewardsClaimed
             }
@@ -75,17 +75,12 @@ class DefeatPokemonQuest(name: String = "Default Defeat Pokemon Quest Title",
     }
 
     init {
-        CobblemonEvents.BATTLE_FAINTED.subscribe {
-
-            if (!isActive() || !it.battle.isPvW) {
+        CobblemonEvents.POKEMON_CAPTURED.subscribe {
+            if (!isActive()) {
                 return@subscribe
             }
 
-            if (!it.battle.players.any { p -> group.includesPlayer(p) }) {
-                return@subscribe
-            }
-
-            if (it.killed.originalPokemon.isWild() && pokeMatch.matches(it.killed.originalPokemon)) {
+            if (group.includesPlayer(it.player) && pokeMatch.matches(it.pokemon)) {
                 progress += 1
                 this.notifyProgress()
                 if (completed()) {
@@ -118,8 +113,4 @@ class DefeatPokemonQuest(name: String = "Default Defeat Pokemon Quest Title",
         return Text.literal("(${progress}/${amount})")
     }
 
-    override fun saveState(): JsonObject {
-        val jsonObject = JsonObject()
-        return jsonObject
-    }
 }

@@ -1,8 +1,7 @@
-package dev.roanoke.rib.quests.types
+package dev.roanoke.rib.quests.types.placeholders
 
 import com.google.gson.JsonObject
 import dev.roanoke.rib.Rib
-import dev.roanoke.rib.callbacks.ItemCraftedCallback
 import dev.roanoke.rib.quests.Quest
 import dev.roanoke.rib.quests.QuestGroup
 import dev.roanoke.rib.quests.QuestProvider
@@ -11,11 +10,8 @@ import dev.roanoke.rib.utils.ItemBuilder
 import eu.pb4.placeholders.api.PlaceholderContext
 import eu.pb4.placeholders.api.Placeholders
 import eu.pb4.sgui.api.elements.GuiElementBuilder
-import net.minecraft.item.Item
-import net.minecraft.registry.Registries
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.Text
-import net.minecraft.util.Identifier
 import java.util.*
 import kotlin.math.max
 
@@ -106,12 +102,4 @@ class IntPlaceholderQuest(name: String = "Default IntPlaceholder Quest Title",
         return Text.literal("(${getProgress()}/${amount})")
     }
 
-    override fun saveState(): JsonObject {
-        val jsonObject = JsonObject()
-        jsonObject.addProperty("type", "CraftItemQuest")
-        jsonObject.addProperty("name", name)
-        jsonObject.addProperty("id", id.toString())
-        jsonObject.addProperty("amount", amount)
-        return jsonObject
-    }
 }

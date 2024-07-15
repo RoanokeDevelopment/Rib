@@ -3,7 +3,12 @@ package dev.roanoke.rib.quests
 import com.google.gson.JsonObject
 import dev.roanoke.rib.Rib
 import dev.roanoke.rib.gui.ButtonElement
-import dev.roanoke.rib.quests.types.*
+import dev.roanoke.rib.quests.types.cobblemon.CatchPokemonQuest
+import dev.roanoke.rib.quests.types.cobblemon.DefeatPokemonQuest
+import dev.roanoke.rib.quests.types.cobblemon.HarvestApricornQuest
+import dev.roanoke.rib.quests.types.minecraft.BreakBlockQuest
+import dev.roanoke.rib.quests.types.minecraft.CraftItemQuest
+import dev.roanoke.rib.quests.types.placeholders.IntPlaceholderQuest
 import dev.roanoke.rib.rewards.RewardList
 import dev.roanoke.rib.utils.ItemBuilder
 import dev.roanoke.rib.utils.LoreLike
@@ -35,16 +40,17 @@ abstract class Quest(
 
     fun getButtonCallback(): (ServerPlayerEntity) -> Unit {
         return { player ->
-
-            if (completed()) {
-                if (rewardsClaimed) {
-                    player.sendMessage(Text.literal("These rewards have already been claimed!"))
+            if (rewards.rewards.isNotEmpty()) {
+                if (completed()) {
+                    if (rewardsClaimed) {
+                        player.sendMessage(Text.literal("These rewards have already been claimed!"))
+                    } else {
+                        player.sendMessage(Text.literal("Redeemed Quest Rewards"))
+                        claimRewards(player)
+                    }
                 } else {
-                    player.sendMessage(Text.literal("Redeemed Quest Rewards"))
-                    claimRewards(player)
+                    player.sendMessage(Text.literal("You need to actually finish the Quest before you can have your rewards!"))
                 }
-            } else {
-                player.sendMessage(Text.literal("You need to actually finish the Quest before you can have your rewards!"))
             }
         }
     }
@@ -114,17 +120,10 @@ abstract class Quest(
 
     abstract fun getState(): JsonObject
 
-    @Deprecated(
-        message = "The definition & state of a Quest should be stored separately. Use getState() to get relevant stateful information as a JsonObject",
-        replaceWith = ReplaceWith("getState()")
-    )
-    abstract fun saveState(): JsonObject
-
     abstract fun applyState(state: JsonObject)
 
     interface QuestFactory {
         fun fromState(json: JsonObject, state: JsonObject, provider: QuestProvider, group: QuestGroup): Quest
-
     }
 
     companion object : QuestFactory {

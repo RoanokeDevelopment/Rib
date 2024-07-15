@@ -1,4 +1,4 @@
-package dev.roanoke.rib.quests.types
+package dev.roanoke.rib.quests.types.minecraft
 
 import com.google.gson.JsonObject
 import dev.roanoke.rib.Rib
@@ -100,14 +100,4 @@ class CraftItemQuest(name: String = "Default Craft Quest Title",
         return Text.literal("(${progress}/${amount})")
     }
 
-    override fun saveState(): JsonObject {
-        val jsonObject = JsonObject()
-        jsonObject.addProperty("type", "CraftItemQuest")
-        jsonObject.addProperty("name", name)
-        jsonObject.addProperty("id", id.toString())
-        jsonObject.addProperty("item", Registries.ITEM.getId(item).toString())
-        jsonObject.addProperty("amount", amount)
-        jsonObject.addProperty("progress", progress)
-        return jsonObject
-    }
 }
