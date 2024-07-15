@@ -3,9 +3,7 @@ package dev.roanoke.rib.quests
 import com.google.gson.JsonObject
 import dev.roanoke.rib.Rib
 import dev.roanoke.rib.gui.ButtonElement
-import dev.roanoke.rib.quests.types.cobblemon.CatchPokemonQuest
-import dev.roanoke.rib.quests.types.cobblemon.DefeatPokemonQuest
-import dev.roanoke.rib.quests.types.cobblemon.HarvestApricornQuest
+import dev.roanoke.rib.quests.types.cobblemon.*
 import dev.roanoke.rib.quests.types.minecraft.BreakBlockQuest
 import dev.roanoke.rib.quests.types.minecraft.CraftItemQuest
 import dev.roanoke.rib.quests.types.placeholders.IntPlaceholderQuest
@@ -141,6 +139,9 @@ abstract class Quest(
                 "HarvestApricornQuest" -> HarvestApricornQuest.fromState(json, state, provider, group)
                 "DefeatPokemonQuest" -> DefeatPokemonQuest.fromState(json, state, provider, group)
                 "IntPlaceholderQuest" -> IntPlaceholderQuest.fromState(json, state, provider, group)
+                "NicknamePokemonQuest" -> NicknamePokemonQuest.fromState(json, state, provider, group)
+                "TradePokemonQuest" -> TradePokemonQuest.fromState(json, state, provider, group)
+                "ReleasePokemonQuest" -> ReleasePokemonQuest.fromState(json, state, provider, group)
                 else -> throw IllegalArgumentException("Unsupported quest type: $type")
             }
         }
