@@ -12,6 +12,7 @@ import net.minecraft.item.ItemStack
 class PokeMatch(
     val species: String = "",
     val form: String = "",
+    val aspects: List<String> = listOf(),
     val shiny: Boolean? = null
 ) {
 
@@ -20,11 +21,15 @@ class PokeMatch(
 
             val species = json["species"]?.jsonPrimitive?.contentOrNull ?: ""
             val form = json["form"]?.jsonPrimitive?.contentOrNull ?: ""
+            val aspects = json["aspects"]?.jsonArray?.map {
+                it.jsonPrimitive.content
+            } ?: listOf()
             val shiny = json["shiny"]?.jsonPrimitive?.boolean
 
             return PokeMatch(
                 species = species,
                 form = form,
+                aspects = aspects,
                 shiny = shiny
             )
         }
@@ -41,6 +46,10 @@ class PokeMatch(
             if (form != "") {
                 properties += " $form"
             }
+        }
+
+        aspects.forEach {
+            properties += " $it"
         }
 
         shiny?.let {
@@ -61,12 +70,12 @@ class PokeMatch(
         }
 
         shiny?.let {
-            if (pokemon.shiny == shiny) {
-                return true
+            if (pokemon.shiny != shiny) {
+                return false
             }
         }
 
-        return true
+        return pokemon.aspects.containsAll(aspects)
 
     }
 
@@ -77,6 +86,7 @@ class PokeMatch(
         shiny?.let {
             match["shiny"] = JsonPrimitive(shiny)
         }
+        match["aspects"] = JsonArray(aspects.map { JsonPrimitive(it)})
         return JsonObject(match)
     }
 }

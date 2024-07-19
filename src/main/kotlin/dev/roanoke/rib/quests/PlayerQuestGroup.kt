@@ -40,6 +40,10 @@ class PlayerQuestGroup(
         return players.contains(player.uuid)
     }
 
+    override fun includesPlayer(uuid: UUID): Boolean {
+        return players.contains(uuid)
+    }
+
     override fun isOnlyPlayer(player: ServerPlayerEntity): Boolean {
         return players.contains(player.uuid) && players.size == 1
     }
