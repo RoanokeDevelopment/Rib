@@ -6,6 +6,7 @@ import dev.roanoke.rib.gui.ButtonElement
 import dev.roanoke.rib.quests.types.cobblemon.*
 import dev.roanoke.rib.quests.types.minecraft.BreakBlockQuest
 import dev.roanoke.rib.quests.types.minecraft.CraftItemQuest
+import dev.roanoke.rib.quests.types.other.HasPermissionQuest
 import dev.roanoke.rib.quests.types.placeholders.IntPlaceholderQuest
 import dev.roanoke.rib.rewards.RewardList
 import dev.roanoke.rib.utils.ItemBuilder
@@ -142,6 +143,8 @@ abstract class Quest(
                 "NicknamePokemonQuest" -> NicknamePokemonQuest.fromState(json, state, provider, group)
                 "TradePokemonQuest" -> TradePokemonQuest.fromState(json, state, provider, group)
                 "ReleasePokemonQuest" -> ReleasePokemonQuest.fromState(json, state, provider, group)
+                "EvolvePokemonQuest" -> EvolvePokemonQuest.fromState(json, state, provider, group)
+                "HasPermissionQuest" -> HasPermissionQuest.fromState(json, state, provider, group)
                 else -> throw IllegalArgumentException("Unsupported quest type: $type")
             }
         }

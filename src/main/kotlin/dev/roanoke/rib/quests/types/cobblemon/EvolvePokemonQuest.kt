@@ -14,35 +14,35 @@ import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.Text
 import java.util.*
 
-class TradePokemonQuest(name: String = "Trade Pokemon Quest",
-                        id: String = UUID.randomUUID().toString(),
-                        provider: QuestProvider,
-                        group: QuestGroup,
-                        var sentPokemon: PokeMatch = PokeMatch(),
-                        var recievedPokemon: PokeMatch = PokeMatch(),
-                        var taskMessage: String = "Trade a Pokemon!",
-                        var amount: Int = 1,
-                        var progress: Int = 0
+class EvolvePokemonQuest(name: String = "Evolve Pokemon Quest",
+                         id: String = UUID.randomUUID().toString(),
+                         provider: QuestProvider,
+                         group: QuestGroup,
+                         var preEvolution: PokeMatch = PokeMatch(),
+                         var postEvolution: PokeMatch = PokeMatch(),
+                         var taskMessage: String = "Evolve a Pokemon!",
+                         var amount: Int = 1,
+                         var progress: Int = 0
 ) :
     Quest(name, id, provider, group) {
 
     companion object : Quest.QuestFactory {
         override fun fromState(json: JsonObject, state: JsonObject, provider: QuestProvider, group: QuestGroup): Quest {
-            val name = json.get("name").asString ?: "Trade Pokemon Quest"
+            val name = json.get("name").asString ?: "Evolve Pokemon Quest"
 
             val id = json.get("id")?.asString ?: UUID.randomUUID().toString()
 
-            var sentPokemon = PokeMatch()
-            if (json.has("sentPokemon")) {
-                sentPokemon = PokeMatch.fromJson(json.get("sentPokemon").asJsonObject)
+            var preEvolution = PokeMatch()
+            if (json.has("preEvolution")) {
+                preEvolution = PokeMatch.fromJson(json.get("preEvolution").asJsonObject)
             }
 
-            var recievedPokemon = PokeMatch()
-            if (json.has("recievedPokemon")) {
-                recievedPokemon = PokeMatch.fromJson(json.get("recievedPokemon").asJsonObject)
+            var postEvolution = PokeMatch()
+            if (json.has("postEvolution")) {
+                postEvolution = PokeMatch.fromJson(json.get("postEvolution").asJsonObject)
             }
 
-            var taskMessage = "Trade a Pokemon!"
+            var taskMessage = "Evolve a Pokemon!"
             if (json.has("taskMessage")) {
                 taskMessage = json.get("taskMessage").asString
             }
@@ -61,9 +61,9 @@ class TradePokemonQuest(name: String = "Trade Pokemon Quest",
                 progress = state.get("progress")?.asInt ?: 0
             }
 
-            return TradePokemonQuest(
+            return EvolvePokemonQuest(
                 name, id, provider, group,
-                sentPokemon = sentPokemon, recievedPokemon = recievedPokemon,
+                preEvolution = preEvolution, postEvolution = postEvolution,
                 taskMessage, amount, progress)
                 .apply {
                     rewards = rRewards;
@@ -85,24 +85,20 @@ class TradePokemonQuest(name: String = "Trade Pokemon Quest",
     }
 
     init {
-        CobblemonEvents.TRADE_COMPLETED.subscribe {
+        CobblemonEvents.EVOLUTION_COMPLETE.subscribe {
             if (!isActive()) {
                 return@subscribe
             }
 
-            if (group.includesPlayer(it.tradeParticipant1.uuid)) {
-                if (sentPokemon.matches(it.tradeParticipant1Pokemon)
-                    && recievedPokemon.matches(it.tradeParticipant2Pokemon)) {
-                    progress += 1
-                    this.notifyProgress()
-                }
-            }
+            it.pokemon.getOwnerPlayer()?.let { player ->
+                if (group.includesPlayer(player)) {
+                    if (preEvolution.matches(it.pokemon)
+                        && postEvolution.matches(it.evolution.result.create())) {
 
-            if (group.includesPlayer(it.tradeParticipant2.uuid)) {
-                if (sentPokemon.matches(it.tradeParticipant2Pokemon)
-                    && recievedPokemon.matches(it.tradeParticipant1Pokemon)) {
-                    progress += 1
-                    this.notifyProgress()
+                        progress += 1
+                        this.notifyProgress()
+
+                    }
                 }
             }
 
@@ -111,7 +107,7 @@ class TradePokemonQuest(name: String = "Trade Pokemon Quest",
 
     override fun getButton(player: ServerPlayerEntity): GuiElementBuilder {
         return GuiElementBuilder.from(
-            ItemBuilder(sentPokemon.getPokemonItem())
+            ItemBuilder(postEvolution.getPokemonItem())
                 .setCustomName(Rib.Rib.parseText(name))
                 .addLore(getButtonLore()
             ).build()
