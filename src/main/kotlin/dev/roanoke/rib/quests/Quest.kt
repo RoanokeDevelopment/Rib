@@ -145,6 +145,7 @@ abstract class Quest(
                 "ReleasePokemonQuest" -> ReleasePokemonQuest.fromState(json, state, provider, group)
                 "EvolvePokemonQuest" -> EvolvePokemonQuest.fromState(json, state, provider, group)
                 "HasPermissionQuest" -> HasPermissionQuest.fromState(json, state, provider, group)
+                "HatchEggQuest" -> HatchEggQuest.fromState(json, state, provider, group)
                 else -> throw IllegalArgumentException("Unsupported quest type: $type")
             }
         }
