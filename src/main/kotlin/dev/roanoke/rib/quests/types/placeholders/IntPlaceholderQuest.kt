@@ -3,6 +3,7 @@ package dev.roanoke.rib.quests.types.placeholders
 import com.google.gson.JsonObject
 import dev.roanoke.rib.Rib
 import dev.roanoke.rib.quests.Quest
+import dev.roanoke.rib.quests.QuestFactory
 import dev.roanoke.rib.quests.QuestGroup
 import dev.roanoke.rib.quests.QuestProvider
 import dev.roanoke.rib.rewards.RewardList
@@ -26,9 +27,8 @@ class IntPlaceholderQuest(name: String = "Default IntPlaceholder Quest Title",
 ) :
     Quest(name, id, provider, group) {
 
-    companion object : Quest.QuestFactory {
-        override fun fromState(json: JsonObject, state: JsonObject, provider: QuestProvider, group: QuestGroup): Quest {
-            val name = json.get("name")?.asString ?: "Default IntPlaceholder Quest Title"
+    companion object : QuestFactory {
+        override fun fromJson(json: JsonObject, state: JsonObject, provider: QuestProvider, group: QuestGroup): Quest {val name = json.get("name")?.asString ?: "Default IntPlaceholder Quest Title"
             val id = json.get("id")?.asString ?: UUID.randomUUID().toString()
 
             val placeholder = json.get("placeholder").asString

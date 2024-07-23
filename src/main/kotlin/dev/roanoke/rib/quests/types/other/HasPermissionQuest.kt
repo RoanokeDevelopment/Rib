@@ -3,6 +3,7 @@ package dev.roanoke.rib.quests.types.other
 import com.google.gson.JsonObject
 import dev.roanoke.rib.Rib
 import dev.roanoke.rib.quests.Quest
+import dev.roanoke.rib.quests.QuestFactory
 import dev.roanoke.rib.quests.QuestGroup
 import dev.roanoke.rib.quests.QuestProvider
 import dev.roanoke.rib.rewards.RewardList
@@ -26,8 +27,8 @@ class HasPermissionQuest(name: String = "Default Has Permission Quest Title",
     ) :
     Quest(name, id, provider, group) {
 
-    companion object : Quest.QuestFactory {
-        override fun fromState(json: JsonObject, state: JsonObject, provider: QuestProvider, group: QuestGroup): Quest {
+    companion object : QuestFactory {
+        override fun fromJson(json: JsonObject, state: JsonObject, provider: QuestProvider, group: QuestGroup): Quest {
             val name = json.get("name")?.asString ?: "Default Has Permission Quest Title"
             val id = json.get("id")?.asString ?: UUID.randomUUID().toString()
 

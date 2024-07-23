@@ -8,6 +8,7 @@ import net.minecraft.registry.Registries
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import dev.roanoke.rib.quests.Quest
+import dev.roanoke.rib.quests.QuestFactory
 import dev.roanoke.rib.quests.QuestGroup
 import dev.roanoke.rib.quests.QuestProvider
 import dev.roanoke.rib.rewards.RewardList
@@ -26,8 +27,8 @@ class CraftItemQuest(name: String = "Default Craft Quest Title",
 ) :
     Quest(name, id, provider, group) {
 
-    companion object : Quest.QuestFactory {
-        override fun fromState(json: JsonObject, state: JsonObject, provider: QuestProvider, group: QuestGroup): Quest {
+    companion object : QuestFactory {
+        override fun fromJson(json: JsonObject, state: JsonObject, provider: QuestProvider, group: QuestGroup): Quest {
             val name = json.get("name")?.asString ?: "Default Craft Quest Title"
             val id = json.get("id")?.asString ?: UUID.randomUUID().toString()
 

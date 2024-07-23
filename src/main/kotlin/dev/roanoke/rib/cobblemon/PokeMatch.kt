@@ -75,9 +75,9 @@ class PokeMatch(
         }
 
         types.forEach {
-            if (!pokemon.types.map { type ->
-                type.name.lowercase()
-            }.contains(it)) {
+            Rib.LOGGER.info("PokeMatching Defined Type: $it")
+            if (!pokemon.types.map { type -> type.name.lowercase() }
+                .contains(it.lowercase())) {
                 return false
             }
         }

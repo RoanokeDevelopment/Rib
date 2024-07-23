@@ -122,32 +122,4 @@ abstract class Quest(
 
     abstract fun applyState(state: JsonObject)
 
-    interface QuestFactory {
-        fun fromState(json: JsonObject, state: JsonObject, provider: QuestProvider, group: QuestGroup): Quest
-    }
-
-    companion object : QuestFactory {
-        override fun fromState(json: JsonObject, state: JsonObject, provider: QuestProvider, group: QuestGroup): Quest {
-            throw UnsupportedOperationException("Use fromJson method instead.")
-        }
-
-        fun fromJson(json: JsonObject, state: JsonObject, provider: QuestProvider, group: QuestGroup): Quest {
-            val type = json.get("type").asString
-            return when (type) {
-                "BreakBlockQuest" -> BreakBlockQuest.fromState(json, state, provider, group)
-                "CraftItemQuest" -> CraftItemQuest.fromState(json, state, provider, group)
-                "CatchPokemonQuest" -> CatchPokemonQuest.fromState(json, state, provider, group)
-                "HarvestApricornQuest" -> HarvestApricornQuest.fromState(json, state, provider, group)
-                "DefeatPokemonQuest" -> DefeatPokemonQuest.fromState(json, state, provider, group)
-                "IntPlaceholderQuest" -> IntPlaceholderQuest.fromState(json, state, provider, group)
-                "NicknamePokemonQuest" -> NicknamePokemonQuest.fromState(json, state, provider, group)
-                "TradePokemonQuest" -> TradePokemonQuest.fromState(json, state, provider, group)
-                "ReleasePokemonQuest" -> ReleasePokemonQuest.fromState(json, state, provider, group)
-                "EvolvePokemonQuest" -> EvolvePokemonQuest.fromState(json, state, provider, group)
-                "HasPermissionQuest" -> HasPermissionQuest.fromState(json, state, provider, group)
-                else -> throw IllegalArgumentException("Unsupported quest type: $type")
-            }
-        }
-    }
-
 }
