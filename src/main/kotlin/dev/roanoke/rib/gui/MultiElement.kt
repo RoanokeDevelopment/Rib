@@ -21,6 +21,18 @@ class MultiElement(
 
     var currentPage: Int = 1
 
+    private var backButtonItem: GuiElementBuilder = GuiElementBuilder.from(
+        Items.ARROW.defaultStack.setCustomName(
+            Text.literal("Back")
+        )
+    )
+
+    private var nextButtonItem: GuiElementBuilder = GuiElementBuilder.from(
+        Items.ARROW.defaultStack.setCustomName(
+            Text.literal("Next")
+        )
+    )
+
     fun applyFillOpen(gui: SimpleGui) {
         GuiUtils.fillGUI(gui)
         this.applyToGui(gui)
@@ -44,23 +56,17 @@ class MultiElement(
     }
 
     fun placePaginationButtons(gui: SimpleGui) {
-        gui.setSlot(backButtonSlot, GuiElementBuilder.from(
-            Items.ARROW.defaultStack.setCustomName(
-                Text.literal("Back")
-            )
-        ).setCallback { x: Int, y: ClickType?, z: SlotActionType? ->
-            this.decrementPage()
-            this.applyToGui(gui)
-        })
+        gui.setSlot(backButtonSlot, backButtonItem
+            .setCallback { _, _, _ ->
+                this.decrementPage()
+                this.applyToGui(gui)
+            })
 
-        gui.setSlot(forwardButtonSlot, GuiElementBuilder.from(
-            Items.ARROW.defaultStack.setCustomName(
-                Text.literal("Forward")
-            )
-        ).setCallback { x: Int, y: ClickType?, z: SlotActionType? ->
-            this.incremementPage()
-            this.applyToGui(gui)
-        })
+        gui.setSlot(forwardButtonSlot, nextButtonItem
+            .setCallback { _, _, _ ->
+                this.incrementPage()
+                this.applyToGui(gui)
+            })
     }
 
     fun applyToGui(gui: SimpleGui) {
@@ -92,19 +98,40 @@ class MultiElement(
 
     }
 
+    @Deprecated(
+        message = "Typo in function name, use incrementPage() instead",
+        replaceWith = ReplaceWith("incrementPage()"),
+        level = DeprecationLevel.WARNING
+    )
     fun incremementPage() {
+        incrementPage()
+    }
+
+    fun incrementPage() {
         val totalPages =
             ceil(guiElements.size.toDouble() / this.getItemsPerPage()).toInt()
         currentPage++
         if (this.currentPage > totalPages) {
-            currentPage--
+            currentPage = 1
         }
     }
 
     fun decrementPage() {
+        val totalPages =
+            ceil(guiElements.size.toDouble() / this.getItemsPerPage()).toInt()
         currentPage--
         if (this.currentPage < 1) {
-            this.currentPage = 1
+            this.currentPage = totalPages
         }
+    }
+
+    @JvmName("setBackButtonItemJvm")
+    fun setBackButtonItem(item: GuiElementBuilder) {
+        this.backButtonItem = item
+    }
+
+    @JvmName("setNextButtonItemJvm")
+    fun setNextButtonItem(item: GuiElementBuilder) {
+        this.nextButtonItem = item
     }
 }
