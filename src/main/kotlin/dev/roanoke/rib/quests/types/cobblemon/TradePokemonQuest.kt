@@ -29,9 +29,6 @@ class TradePokemonQuest(name: String = "Trade Pokemon Quest",
 
     companion object : QuestFactory {
         override fun fromJson(json: JsonObject, state: JsonObject, provider: QuestProvider, group: QuestGroup): Quest {
-            val name = json.get("name").asString ?: "Trade Pokemon Quest"
-
-            val id = json.get("id")?.asString ?: UUID.randomUUID().toString()
 
             var sentPokemon = PokeMatch()
             if (json.has("sentPokemon")) {
@@ -53,22 +50,17 @@ class TradePokemonQuest(name: String = "Trade Pokemon Quest",
                 amount = json.get("amount").asInt
             }
 
-            val rRewards = RewardList.fromJson(json.get("rewards"))
-
-            val rRewardsClaimed = state.get("rewardsClaimed")?.asBoolean ?: false
-
             var progress = 0
             if (json.has("progress")) {
                 progress = state.get("progress")?.asInt ?: 0
             }
 
             return TradePokemonQuest(
-                name, id, provider, group,
+                provider = provider, group = group,
                 sentPokemon = sentPokemon, recievedPokemon = recievedPokemon,
-                taskMessage, amount, progress)
+                taskMessage = taskMessage, amount = amount, progress = progress)
                 .apply {
-                    rewards = rRewards;
-                    rewardsClaimed = rRewardsClaimed
+                    loadDefaultValues(json, state)
             }
         }
     }

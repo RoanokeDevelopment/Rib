@@ -28,8 +28,6 @@ class HarvestApricornQuest(
 
     companion object : QuestFactory {
         override fun fromJson(json: JsonObject, state: JsonObject, provider: QuestProvider, group: QuestGroup): Quest {
-            val name = json.get("name")?.asString ?: "Default Harvest Apricorn Quest Title"
-            val id = json.get("id")?.asString ?: UUID.randomUUID().toString()
 
             val apricornString = json.get("apricorn")?.asString ?: "BLACK"
 
@@ -41,17 +39,14 @@ class HarvestApricornQuest(
             }
 
             val amount = json.get("amount")?.asInt ?: 3
-            val rRewards = RewardList.fromJson(json.get("rewards"))
-
-            // anything that is stateful goes here
-
-            val rRewardsClaimed = state.get("rewardsClaimed")?.asBoolean ?: false
 
             val progress = state.get("progress")?.asInt ?: 0
 
-            return HarvestApricornQuest(name, id, provider, group, apricorn, amount, progress).apply {
-                rewards = rRewards;
-                rewardsClaimed = rRewardsClaimed
+            return HarvestApricornQuest(
+                provider = provider, group = group,
+                apricorn = apricorn, amount = amount,
+                progress = progress).apply {
+                 loadDefaultValues(json, state)
             }
         }
     }

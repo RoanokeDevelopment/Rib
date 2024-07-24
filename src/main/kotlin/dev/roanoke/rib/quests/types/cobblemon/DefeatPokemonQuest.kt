@@ -28,9 +28,6 @@ class DefeatPokemonQuest(name: String = "Default Defeat Pokemon Quest Title",
 
     companion object : QuestFactory {
         override fun fromJson(json: JsonObject, state: JsonObject, provider: QuestProvider, group: QuestGroup): Quest {
-            val name = json.get("name").asString ?: "Default Defeat Pokemon Quest Title"
-
-            val id = json.get("id")?.asString ?: UUID.randomUUID().toString()
 
             var pokeMatch = PokeMatch()
             if (json.has("pokeMatch")) {
@@ -47,18 +44,16 @@ class DefeatPokemonQuest(name: String = "Default Defeat Pokemon Quest Title",
                 amount = json.get("amount").asInt
             }
 
-            val rRewards = RewardList.fromJson(json.get("rewards"))
-
-            val rRewardsClaimed = state.get("rewardsClaimed")?.asBoolean ?: false
-
             var progress = 0
             if (state.has("progress")) {
                 progress = state.get("progress")?.asInt ?: 0
             }
 
-            return DefeatPokemonQuest(name, id, provider, group, pokeMatch, taskMessage, amount, progress).apply {
-                rewards = rRewards;
-                rewardsClaimed = rRewardsClaimed
+            return CatchPokemonQuest(provider = provider,
+                group = group, pokeMatch = pokeMatch,
+                taskMessage = taskMessage, amount = amount,
+                progress = progress).apply {
+                    loadDefaultValues(json, state)
             }
         }
     }

@@ -29,9 +29,6 @@ class EvolvePokemonQuest(name: String = "Evolve Pokemon Quest",
 
     companion object : QuestFactory {
         override fun fromJson(json: JsonObject, state: JsonObject, provider: QuestProvider, group: QuestGroup): Quest {
-            val name = json.get("name").asString ?: "Evolve Pokemon Quest"
-
-            val id = json.get("id")?.asString ?: UUID.randomUUID().toString()
 
             var preEvolution = PokeMatch()
             if (json.has("preEvolution")) {
@@ -53,22 +50,17 @@ class EvolvePokemonQuest(name: String = "Evolve Pokemon Quest",
                 amount = json.get("amount").asInt
             }
 
-            val rRewards = RewardList.fromJson(json.get("rewards"))
-
-            val rRewardsClaimed = state.get("rewardsClaimed")?.asBoolean ?: false
-
             var progress = 0
             if (json.has("progress")) {
                 progress = state.get("progress")?.asInt ?: 0
             }
 
             return EvolvePokemonQuest(
-                name, id, provider, group,
+                provider = provider, group = group,
                 preEvolution = preEvolution, postEvolution = postEvolution,
-                taskMessage, amount, progress)
+                taskMessage = taskMessage, amount = amount, progress = progress)
                 .apply {
-                    rewards = rRewards;
-                    rewardsClaimed = rRewardsClaimed
+                    loadDefaultValues(json, state)
             }
         }
     }

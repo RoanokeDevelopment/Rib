@@ -29,12 +29,6 @@ class CatchPokemonQuest(name: String = "Default Catch Pokemon Quest Title",
     companion object : QuestFactory {
         override fun fromJson(json: JsonObject, state: JsonObject, provider: QuestProvider, group: QuestGroup): Quest {
 
-            Rib.LOGGER.info("Loading CatchPokemonQuest")
-
-            val name = json.get("name").asString ?: "Default Catch Pokemon Quest Title"
-
-            val id = json.get("id")?.asString ?: UUID.randomUUID().toString()
-
             var pokeMatch = PokeMatch()
             if (json.has("pokeMatch")) {
                 pokeMatch = PokeMatch.fromJson(json.get("pokeMatch").asJsonObject)
@@ -50,18 +44,16 @@ class CatchPokemonQuest(name: String = "Default Catch Pokemon Quest Title",
                 amount = json.get("amount").asInt
             }
 
-            val rRewards = RewardList.fromJson(json.get("rewards"))
-
-            val rRewardsClaimed = state.get("rewardsClaimed")?.asBoolean ?: false
-
             var progress = 0
             if (json.has("progress")) {
                 progress = state.get("progress")?.asInt ?: 0
             }
 
-            return CatchPokemonQuest(name, id, provider, group, pokeMatch, taskMessage, amount, progress).apply {
-                rewards = rRewards;
-                rewardsClaimed = rRewardsClaimed
+            return CatchPokemonQuest(provider = provider,
+                group = group, pokeMatch = pokeMatch,
+                taskMessage = taskMessage, amount = amount,
+                progress = progress).apply {
+                    loadDefaultValues(json, state)
             }
         }
     }

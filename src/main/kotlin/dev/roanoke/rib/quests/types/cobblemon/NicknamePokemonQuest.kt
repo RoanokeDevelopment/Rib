@@ -30,9 +30,6 @@ class NicknamePokemonQuest(name: String = "Nickname Pokemon Quest",
 
     companion object : QuestFactory {
         override fun fromJson(json: JsonObject, state: JsonObject, provider: QuestProvider, group: QuestGroup): Quest {
-            val name = json.get("name").asString ?: "Nickname Pokemon Quest"
-
-            val id = json.get("id")?.asString ?: UUID.randomUUID().toString()
 
             var taskMessage = "Nickname a Pokemon!"
             if (json.has("taskMessage")) {
@@ -54,22 +51,17 @@ class NicknamePokemonQuest(name: String = "Nickname Pokemon Quest",
                 amount = json.get("amount").asInt
             }
 
-            val rRewards = RewardList.fromJson(json.get("rewards"))
-
-            val rRewardsClaimed = state.get("rewardsClaimed")?.asBoolean ?: false
-
             var progress = 0
             if (json.has("progress")) {
                 progress = state.get("progress")?.asInt ?: 0
             }
 
             return NicknamePokemonQuest(
-                name, id, provider, group,
+                provider = provider, group = group,
                 regex = regex, pokeMatch = pokeMatch,
-                taskMessage, amount, progress)
-                .apply {
-                    rewards = rRewards;
-                    rewardsClaimed = rRewardsClaimed
+                taskMessage = taskMessage, amount = amount,
+                progress = progress).apply {
+                    loadDefaultValues(json, state)
             }
         }
     }

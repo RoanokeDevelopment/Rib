@@ -37,6 +37,13 @@ abstract class Quest(
         }
     }
 
+    fun loadDefaultValues(definition: JsonObject, state: JsonObject) {
+        name = definition.get("name").asString ?: "Default Quest Title"
+        id = definition.get("id")?.asString ?: UUID.randomUUID().toString()
+        rewards = RewardList.fromJson(definition.get("rewards"))
+        rewardsClaimed = state.get("rewardsClaimed")?.asBoolean ?: false
+    }
+
     fun getButtonCallback(): (ServerPlayerEntity) -> Unit {
         return { player ->
             if (rewards.rewards.isNotEmpty()) {

@@ -29,22 +29,19 @@ class BreakBlockQuest(name: String = "Default Quest Title",
 
     companion object : QuestFactory {
         override fun fromJson(json: JsonObject, state: JsonObject, provider: QuestProvider, group: QuestGroup): Quest {
-            val name = json.get("name")?.asString ?: "Default Break Block Quest Title"
-            val id = json.get("id")?.asString ?: UUID.randomUUID().toString()
 
             val blockString = json.get("block")?.asString ?: "minecraft:stone"
             val block: Block = Block.getBlockFromItem(Registries.ITEM.get(Identifier.tryParse(blockString)))
 
             val amount = json.get("amount")?.asInt ?: 3
 
-            val rRewards = RewardList.fromJson(json.get("rewards"))
-
-            val rRewardsClaimed = state.get("rewardsClaimed")?.asBoolean ?: false
             val progress = state.get("progress")?.asInt ?: 0
 
-            return BreakBlockQuest(name, id, provider, group, block, amount, progress).apply {
-                rewards = rRewards;
-                rewardsClaimed = rRewardsClaimed
+            return BreakBlockQuest(
+                provider = provider, group = group,
+                block = block, amount = amount,
+                progress = progress).apply {
+                    loadDefaultValues(json, state)
             }
         }
     }

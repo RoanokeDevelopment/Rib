@@ -29,23 +29,19 @@ class CraftItemQuest(name: String = "Default Craft Quest Title",
 
     companion object : QuestFactory {
         override fun fromJson(json: JsonObject, state: JsonObject, provider: QuestProvider, group: QuestGroup): Quest {
-            val name = json.get("name")?.asString ?: "Default Craft Quest Title"
-            val id = json.get("id")?.asString ?: UUID.randomUUID().toString()
 
             val itemID = json.get("item").asString
             val item: Item = Registries.ITEM.get(Identifier.tryParse(itemID))
 
             val amount = json.get("amount").asInt
 
-            val rRewards = RewardList.fromJson(json.get("rewards"))
-
-            val rRewardsClaimed = state.get("rewardsClaimed")?.asBoolean ?: false
-
             val progress = state.get("progress")?.asInt ?: 0
 
-            return CraftItemQuest(name, id, provider, group, item, amount, progress).apply {
-                rewards = rRewards;
-                rewardsClaimed = rRewardsClaimed
+            return CraftItemQuest(
+                provider = provider, group = group,
+                item = item, amount = amount,
+                progress = progress).apply {
+                    loadDefaultValues(json, state)
             }
         }
     }
