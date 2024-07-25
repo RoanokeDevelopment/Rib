@@ -11,6 +11,8 @@ import dev.roanoke.rib.quests.QuestProvider
 import dev.roanoke.rib.rewards.RewardList
 import dev.roanoke.rib.utils.ItemBuilder
 import eu.pb4.sgui.api.elements.GuiElementBuilder
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonPrimitive
 import net.minecraft.item.Items
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.Text
@@ -76,6 +78,16 @@ class NicknamePokemonQuest(name: String = "Nickname Pokemon Quest",
     override fun applyState(state: JsonObject) {
         progress = state.get("progress")?.asInt ?: progress
         rewardsClaimed = state.get("rewardsClaimed")?.asBoolean ?: rewardsClaimed
+    }
+
+    override fun saveSpecifics(): MutableMap<String, JsonElement> {
+        val specifics: MutableMap<String, JsonElement> = mutableMapOf()
+        specifics["progress"] = JsonPrimitive(progress)
+        specifics["amount"] = JsonPrimitive(amount)
+        specifics["taskMessage"] = JsonPrimitive(taskMessage)
+        specifics["pokeMatch"] = pokeMatch.toJson()
+        specifics["regex"] = JsonPrimitive(regex.pattern)
+        return specifics
     }
 
     init {

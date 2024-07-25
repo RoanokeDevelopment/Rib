@@ -32,6 +32,26 @@ class FormattingUtils {
             }
         }
 
+        fun parseDuration(input: String): Duration {
+            val pattern = Regex("""(\d+)([smhd])""")
+            val matchResult = pattern.matchEntire(input)
+
+            if (matchResult != null) {
+                val (amount, unit) = matchResult.destructured
+                val amountLong = amount.toLong()
+
+                return when (unit) {
+                    "s" -> Duration.ofSeconds(amountLong)
+                    "m" -> Duration.ofMinutes(amountLong)
+                    "h" -> Duration.ofHours(amountLong)
+                    "d" -> Duration.ofDays(amountLong)
+                    else -> throw IllegalArgumentException("Unknown time unit: $unit")
+                }
+            } else {
+                throw IllegalArgumentException("Invalid duration format: $input")
+            }
+        }
+
         fun getOrdinal(number: Int): String {
             val suffix = when {
                 number % 100 in 11..13 -> "th"

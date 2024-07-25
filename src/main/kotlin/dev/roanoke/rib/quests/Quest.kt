@@ -2,6 +2,7 @@ package dev.roanoke.rib.quests
 
 import com.google.gson.JsonObject
 import dev.roanoke.rib.Rib
+import dev.roanoke.rib.cereal.JsonConv
 import dev.roanoke.rib.gui.ButtonElement
 import dev.roanoke.rib.quests.types.cobblemon.*
 import dev.roanoke.rib.quests.types.minecraft.BreakBlockQuest
@@ -12,6 +13,8 @@ import dev.roanoke.rib.rewards.RewardList
 import dev.roanoke.rib.utils.ItemBuilder
 import dev.roanoke.rib.utils.LoreLike
 import eu.pb4.sgui.api.elements.GuiElementBuilder
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonPrimitive
 import net.minecraft.item.Items
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.Text
@@ -128,5 +131,23 @@ abstract class Quest(
     abstract fun getState(): JsonObject
 
     abstract fun applyState(state: JsonObject)
+
+    abstract fun saveSpecifics(): MutableMap<String, JsonElement>
+
+    fun saveDefaults(): MutableMap<String, JsonElement> {
+        val defaults = mutableMapOf<String, JsonElement>()
+        defaults["name"] = JsonPrimitive(name)
+        defaults["id"] = JsonPrimitive(id)
+        defaults["rewards"] = rewards.toJson()
+        defaults["rewardsClaimed"] = JsonPrimitive(rewardsClaimed)
+        return defaults
+    }
+
+    fun save(): kotlinx.serialization.json.JsonObject {
+        val defaults = saveDefaults()
+        val specifics = saveSpecifics()
+        defaults.putAll(specifics)
+        return kotlinx.serialization.json.JsonObject(specifics)
+    }
 
 }

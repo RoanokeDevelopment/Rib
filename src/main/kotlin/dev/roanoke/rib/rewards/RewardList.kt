@@ -5,6 +5,7 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import dev.roanoke.rib.Rib
+import kotlinx.serialization.json.jsonObject
 import net.minecraft.server.network.ServerPlayerEntity
 
 class RewardList(
@@ -21,8 +22,14 @@ class RewardList(
             }
             return rewardList
         }
+
     }
 
+    fun toJson(): kotlinx.serialization.json.JsonArray {
+        return kotlinx.serialization.json.JsonArray(rewards.map {
+            it.toJson()
+        })
+    }
 
     fun executeRewards(player: ServerPlayerEntity) {
         rewards.forEach { reward ->

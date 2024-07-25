@@ -8,6 +8,9 @@ import dev.roanoke.rib.quests.QuestGroup
 import dev.roanoke.rib.quests.QuestProvider
 import dev.roanoke.rib.utils.ItemBuilder
 import eu.pb4.sgui.api.elements.GuiElementBuilder
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonPrimitive
+import net.minecraft.registry.Registries
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.Text
 import java.util.*
@@ -48,6 +51,14 @@ class HasPermissionQuest(name: String = "Default Has Permission Quest Title",
 
     override fun applyState(state: JsonObject) {
         rewardsClaimed = state.get("rewardsClaimed")?.asBoolean ?: rewardsClaimed
+    }
+
+    override fun saveSpecifics(): MutableMap<String, JsonElement> {
+        val specifics: MutableMap<String, JsonElement> = mutableMapOf()
+        specifics["permission"] = JsonPrimitive(permission)
+        specifics["item"] = JsonPrimitive(Registries.ITEM.getId(item.build().item).toString())
+        specifics["taskMessage"] = JsonPrimitive(taskMessage)
+        return specifics
     }
 
     override fun getButton(player: ServerPlayerEntity): GuiElementBuilder {

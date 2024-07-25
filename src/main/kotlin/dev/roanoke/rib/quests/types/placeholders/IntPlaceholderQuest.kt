@@ -10,6 +10,9 @@ import dev.roanoke.rib.utils.ItemBuilder
 import eu.pb4.placeholders.api.PlaceholderContext
 import eu.pb4.placeholders.api.Placeholders
 import eu.pb4.sgui.api.elements.GuiElementBuilder
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonPrimitive
+import net.minecraft.registry.Registries
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.Text
 import java.util.*
@@ -52,6 +55,15 @@ class IntPlaceholderQuest(name: String = "Default IntPlaceholder Quest Title",
 
     override fun applyState(state: JsonObject) {
         rewardsClaimed = state.get("rewardsClaimed")?.asBoolean ?: rewardsClaimed
+    }
+
+    override fun saveSpecifics(): MutableMap<String, JsonElement> {
+        val specifics: MutableMap<String, JsonElement> = mutableMapOf()
+        specifics["placeholder"] = JsonPrimitive(placeholder)
+        specifics["item"] = JsonPrimitive(Registries.ITEM.getId(item.build().item).toString())
+        specifics["taskMessage"] = JsonPrimitive(taskMessage)
+        specifics["amount"] = JsonPrimitive(amount)
+        return specifics
     }
 
     override fun getButton(player: ServerPlayerEntity): GuiElementBuilder {
