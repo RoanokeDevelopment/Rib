@@ -28,7 +28,7 @@ class PokeMatch(
             val aspects = json["aspects"]?.jsonArray?.map {
                 it.jsonPrimitive.content
             } ?: listOf()
-            val shiny = json["shiny"]?.jsonPrimitive?.boolean
+            val shiny = json["shiny"]?.jsonPrimitive?.booleanOrNull
 
             return PokeMatch(
                 species = species,

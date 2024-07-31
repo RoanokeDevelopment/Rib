@@ -143,6 +143,12 @@ public static ItemBuilder fromJson(JsonObject itemData) {
         return GuiElementBuilder.from(build());
     }
 
+    public JsonObject toJson() {
+        JsonObject itemData = new JsonObject();
+        itemData.addProperty("id", getItemID());
+        return itemData;
+    }
+
     @Override
     public String toString() {
         return stack.toString();

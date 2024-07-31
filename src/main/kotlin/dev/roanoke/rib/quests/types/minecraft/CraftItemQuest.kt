@@ -21,13 +21,14 @@ import java.util.*
 
 class CraftItemQuest(name: String = "Default Craft Quest Title",
                      id: String = UUID.randomUUID().toString(),
+                     type: String = "CraftItemQuest",
                      provider: QuestProvider,
                      group: QuestGroup,
                      var item: Item,
                      var amount: Int = 3,
                      var progress: Int = 0
 ) :
-    Quest(name, id, provider, group) {
+    Quest(name, id, type, provider, group) {
 
     companion object : QuestFactory {
         override fun fromJson(json: JsonObject, state: JsonObject, provider: QuestProvider, group: QuestGroup): Quest {

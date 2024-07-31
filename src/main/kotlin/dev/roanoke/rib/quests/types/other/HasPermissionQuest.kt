@@ -17,13 +17,14 @@ import java.util.*
 
 class HasPermissionQuest(name: String = "Default Has Permission Quest Title",
                          id: String = UUID.randomUUID().toString(),
+                         type: String = "HasPermissionQuest",
                          provider: QuestProvider,
                          group: QuestGroup,
                          var item: ItemBuilder,
                          var taskMessage: String,
                          var permission: String
     ) :
-    Quest(name, id, provider, group) {
+    Quest(name, id, type, provider, group) {
 
     companion object : QuestFactory {
         override fun fromJson(json: JsonObject, state: JsonObject, provider: QuestProvider, group: QuestGroup): Quest {

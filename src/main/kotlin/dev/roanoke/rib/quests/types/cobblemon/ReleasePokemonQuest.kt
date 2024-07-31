@@ -19,6 +19,7 @@ import java.util.*
 
 class ReleasePokemonQuest(name: String = "Release Pokemon Quest",
                           id: String = UUID.randomUUID().toString(),
+                          type: String = "ReleasePokemonQuest",
                           provider: QuestProvider,
                           group: QuestGroup,
                           var pokeMatch: PokeMatch = PokeMatch(),
@@ -26,7 +27,7 @@ class ReleasePokemonQuest(name: String = "Release Pokemon Quest",
                           var amount: Int = 1,
                           var progress: Int = 0
 ) :
-    Quest(name, id, provider, group) {
+    Quest(name, id, type, provider, group) {
 
     companion object : QuestFactory {
         override fun fromJson(json: JsonObject, state: JsonObject, provider: QuestProvider, group: QuestGroup): Quest {

@@ -23,6 +23,7 @@ import java.util.UUID
 abstract class Quest(
     var name: String = "Default Quest Title",
     var id: String = UUID.randomUUID().toString(),
+    var type: String,
     var provider: QuestProvider,
     var group: QuestGroup,
     var rewards: RewardList = RewardList(),
@@ -136,6 +137,7 @@ abstract class Quest(
 
     fun saveDefaults(): MutableMap<String, JsonElement> {
         val defaults = mutableMapOf<String, JsonElement>()
+        defaults["type"] = JsonPrimitive(type)
         defaults["name"] = JsonPrimitive(name)
         defaults["id"] = JsonPrimitive(id)
         defaults["rewards"] = rewards.toJson()
@@ -147,7 +149,7 @@ abstract class Quest(
         val defaults = saveDefaults()
         val specifics = saveSpecifics()
         defaults.putAll(specifics)
-        return kotlinx.serialization.json.JsonObject(specifics)
+        return kotlinx.serialization.json.JsonObject(defaults)
     }
 
 }

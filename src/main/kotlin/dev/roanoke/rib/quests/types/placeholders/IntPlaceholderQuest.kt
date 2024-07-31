@@ -20,6 +20,7 @@ import kotlin.math.max
 
 class IntPlaceholderQuest(name: String = "Default IntPlaceholder Quest Title",
                           id: String = UUID.randomUUID().toString(),
+                          type: String = "IntPlaceholderQuest",
                           provider: QuestProvider,
                           group: QuestGroup,
                           var item: ItemBuilder,
@@ -27,7 +28,7 @@ class IntPlaceholderQuest(name: String = "Default IntPlaceholder Quest Title",
                           var placeholder: String,
                           var amount: Int = 6
 ) :
-    Quest(name, id, provider, group) {
+    Quest(name, id, type, provider, group) {
 
     companion object : QuestFactory {
         override fun fromJson(json: JsonObject, state: JsonObject, provider: QuestProvider, group: QuestGroup): Quest {
