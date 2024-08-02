@@ -1,6 +1,8 @@
 package dev.roanoke.rib
 
+import dev.roanoke.rib.callbacks.RegisterQuestCallback
 import dev.roanoke.rib.callbacks.RibInitCallback
+import dev.roanoke.rib.quests.QuestRegistry
 import dev.roanoke.rib.utils.*
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
@@ -57,6 +59,10 @@ class Rib : ModInitializer {
             } catch (e: IllegalStateException) {
                 LOGGER.error("LuckPerms is not installed or is broken!", e)
             }
+
+            QuestRegistry.registerDefaultQuests()
+
+            RegisterQuestCallback.EVENT.invoker().interact()
 
             RibInitCallback.EVENT.invoker().interact()
 

@@ -6,29 +6,31 @@ import com.google.gson.JsonObject
 import dev.roanoke.rib.Rib
 import net.minecraft.text.Text
 import dev.roanoke.rib.quests.Quest
+import dev.roanoke.rib.quests.QuestFactory
 import dev.roanoke.rib.quests.QuestGroup
 import dev.roanoke.rib.quests.QuestProvider
 import dev.roanoke.rib.rewards.RewardList
 import dev.roanoke.rib.utils.ItemBuilder
 import eu.pb4.sgui.api.elements.GuiElementBuilder
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonPrimitive
 import net.minecraft.server.network.ServerPlayerEntity
 import java.util.UUID
 
 class HarvestApricornQuest(
     name: String = "Harvest Some Apricorns",
     id: String = UUID.randomUUID().toString(),
+    type: String = "HarvestApricornQuest",
     provider: QuestProvider,
     group: QuestGroup,
     var apricorn: Apricorn = Apricorn.RED,
     var amount: Int = 3,
     var progress: Int = 0
     ) :
-    Quest(name, id, provider, group) {
+    Quest(name, id, type, provider, group) {
 
-    companion object : Quest.QuestFactory {
-        override fun fromState(json: JsonObject, state: JsonObject, provider: QuestProvider, group: QuestGroup): Quest {
-            val name = json.get("name")?.asString ?: "Default Harvest Apricorn Quest Title"
-            val id = json.get("id")?.asString ?: UUID.randomUUID().toString()
+    companion object : QuestFactory {
+        override fun fromJson(json: JsonObject, state: JsonObject, provider: QuestProvider, group: QuestGroup): Quest {
 
             val apricornString = json.get("apricorn")?.asString ?: "BLACK"
 
@@ -40,31 +42,34 @@ class HarvestApricornQuest(
             }
 
             val amount = json.get("amount")?.asInt ?: 3
-            val rRewards = RewardList.fromJson(json.get("rewards"))
-
-            // anything that is stateful goes here
-
-            val rRewardsClaimed = state.get("rewardsClaimed")?.asBoolean ?: false
 
             val progress = state.get("progress")?.asInt ?: 0
 
-            return HarvestApricornQuest(name, id, provider, group, apricorn, amount, progress).apply {
-                rewards = rRewards;
-                rewardsClaimed = rRewardsClaimed
+            return HarvestApricornQuest(
+                provider = provider, group = group,
+                apricorn = apricorn, amount = amount,
+                progress = progress).apply {
+                 loadDefaultValues(json, state)
             }
         }
     }
 
-    override fun getState(): JsonObject {
+    override fun getQuestState(): JsonObject {
         return JsonObject().apply {
             addProperty("progress", progress)
-            addProperty("rewardsClaimed", rewardsClaimed)
         }
     }
 
-    override fun applyState(state: JsonObject) {
+    override fun applyQuestState(state: JsonObject) {
         progress = state.get("progress")?.asInt ?: progress
-        rewardsClaimed = state.get("rewardsClaimed")?.asBoolean ?: rewardsClaimed
+    }
+
+    override fun saveSpecifics(): MutableMap<String, JsonElement> {
+        val specifics: MutableMap<String, JsonElement> = mutableMapOf()
+        specifics["progress"] = JsonPrimitive(progress)
+        specifics["amount"] = JsonPrimitive(amount)
+        specifics["apricorn"] = JsonPrimitive(apricorn.toString())
+        return specifics
     }
 
     override fun getButton(player: ServerPlayerEntity): GuiElementBuilder {

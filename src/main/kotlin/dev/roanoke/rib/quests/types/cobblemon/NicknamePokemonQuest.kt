@@ -5,11 +5,14 @@ import com.google.gson.JsonObject
 import dev.roanoke.rib.Rib
 import dev.roanoke.rib.cobblemon.PokeMatch
 import dev.roanoke.rib.quests.Quest
+import dev.roanoke.rib.quests.QuestFactory
 import dev.roanoke.rib.quests.QuestGroup
 import dev.roanoke.rib.quests.QuestProvider
 import dev.roanoke.rib.rewards.RewardList
 import dev.roanoke.rib.utils.ItemBuilder
 import eu.pb4.sgui.api.elements.GuiElementBuilder
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonPrimitive
 import net.minecraft.item.Items
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.Text
@@ -17,6 +20,7 @@ import java.util.*
 
 class NicknamePokemonQuest(name: String = "Nickname Pokemon Quest",
                            id: String = UUID.randomUUID().toString(),
+                           type: String = "NicknamePokemonQuest",
                            provider: QuestProvider,
                            group: QuestGroup,
                            var regex: Regex = Regex(".*"),
@@ -25,13 +29,10 @@ class NicknamePokemonQuest(name: String = "Nickname Pokemon Quest",
                            var amount: Int = 1,
                            var progress: Int = 0
 ) :
-    Quest(name, id, provider, group) {
+    Quest(name, id, type, provider, group) {
 
-    companion object : Quest.QuestFactory {
-        override fun fromState(json: JsonObject, state: JsonObject, provider: QuestProvider, group: QuestGroup): Quest {
-            val name = json.get("name").asString ?: "Nickname Pokemon Quest"
-
-            val id = json.get("id")?.asString ?: UUID.randomUUID().toString()
+    companion object : QuestFactory {
+        override fun fromJson(json: JsonObject, state: JsonObject, provider: QuestProvider, group: QuestGroup): Quest {
 
             var taskMessage = "Nickname a Pokemon!"
             if (json.has("taskMessage")) {
@@ -53,36 +54,39 @@ class NicknamePokemonQuest(name: String = "Nickname Pokemon Quest",
                 amount = json.get("amount").asInt
             }
 
-            val rRewards = RewardList.fromJson(json.get("rewards"))
-
-            val rRewardsClaimed = state.get("rewardsClaimed")?.asBoolean ?: false
-
             var progress = 0
             if (json.has("progress")) {
                 progress = state.get("progress")?.asInt ?: 0
             }
 
             return NicknamePokemonQuest(
-                name, id, provider, group,
+                provider = provider, group = group,
                 regex = regex, pokeMatch = pokeMatch,
-                taskMessage, amount, progress)
-                .apply {
-                    rewards = rRewards;
-                    rewardsClaimed = rRewardsClaimed
+                taskMessage = taskMessage, amount = amount,
+                progress = progress).apply {
+                    loadDefaultValues(json, state)
             }
         }
     }
 
-    override fun getState(): JsonObject {
+    override fun getQuestState(): JsonObject {
         return JsonObject().apply {
             addProperty("progress", progress)
-            addProperty("rewardsClaimed", rewardsClaimed)
         }
     }
 
-    override fun applyState(state: JsonObject) {
+    override fun applyQuestState(state: JsonObject) {
         progress = state.get("progress")?.asInt ?: progress
-        rewardsClaimed = state.get("rewardsClaimed")?.asBoolean ?: rewardsClaimed
+    }
+
+    override fun saveSpecifics(): MutableMap<String, JsonElement> {
+        val specifics: MutableMap<String, JsonElement> = mutableMapOf()
+        specifics["progress"] = JsonPrimitive(progress)
+        specifics["amount"] = JsonPrimitive(amount)
+        specifics["taskMessage"] = JsonPrimitive(taskMessage)
+        specifics["pokeMatch"] = pokeMatch.toJson()
+        specifics["regex"] = JsonPrimitive(regex.pattern)
+        return specifics
     }
 
     init {

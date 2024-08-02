@@ -2,6 +2,7 @@ package dev.roanoke.rib.quests
 
 import com.google.gson.JsonObject
 import dev.roanoke.rib.Rib
+import dev.roanoke.rib.cereal.JsonConv
 import dev.roanoke.rib.gui.ButtonElement
 import dev.roanoke.rib.quests.types.cobblemon.*
 import dev.roanoke.rib.quests.types.minecraft.BreakBlockQuest
@@ -12,6 +13,8 @@ import dev.roanoke.rib.rewards.RewardList
 import dev.roanoke.rib.utils.ItemBuilder
 import dev.roanoke.rib.utils.LoreLike
 import eu.pb4.sgui.api.elements.GuiElementBuilder
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonPrimitive
 import net.minecraft.item.Items
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.Text
@@ -20,6 +23,7 @@ import java.util.UUID
 abstract class Quest(
     var name: String = "Default Quest Title",
     var id: String = UUID.randomUUID().toString(),
+    var type: String,
     var provider: QuestProvider,
     var group: QuestGroup,
     var rewards: RewardList = RewardList(),
@@ -35,6 +39,13 @@ abstract class Quest(
         ).setCallback { _, _, _ ->
             getButtonCallback().invoke(player)
         }
+    }
+
+    fun loadDefaultValues(definition: JsonObject, state: JsonObject) {
+        name = definition.get("name").asString ?: "Default Quest Title"
+        id = definition.get("id")?.asString ?: UUID.randomUUID().toString()
+        rewards = RewardList.fromJson(definition.get("rewards"))
+        rewardsClaimed = state.get("rewardsClaimed")?.asBoolean ?: false
     }
 
     fun getButtonCallback(): (ServerPlayerEntity) -> Unit {
@@ -118,37 +129,38 @@ abstract class Quest(
         return taskMessage().copy().append(Text.literal(" ")).append(progressMessage())
     }
 
-    abstract fun getState(): JsonObject
+    abstract fun getQuestState(): JsonObject
 
-    abstract fun applyState(state: JsonObject)
-
-    interface QuestFactory {
-        fun fromState(json: JsonObject, state: JsonObject, provider: QuestProvider, group: QuestGroup): Quest
+    fun getState(): JsonObject {
+        return getQuestState().apply {
+            addProperty("rewardsClaimed", rewardsClaimed)
+        }
     }
 
-    companion object : QuestFactory {
-        override fun fromState(json: JsonObject, state: JsonObject, provider: QuestProvider, group: QuestGroup): Quest {
-            throw UnsupportedOperationException("Use fromJson method instead.")
-        }
+    fun applyState(state: JsonObject) {
+        rewardsClaimed = state.get("rewardsClaimed")?.asBoolean ?: rewardsClaimed
+        applyQuestState(state)
+    }
 
-        fun fromJson(json: JsonObject, state: JsonObject, provider: QuestProvider, group: QuestGroup): Quest {
-            val type = json.get("type").asString
-            return when (type) {
-                "BreakBlockQuest" -> BreakBlockQuest.fromState(json, state, provider, group)
-                "CraftItemQuest" -> CraftItemQuest.fromState(json, state, provider, group)
-                "CatchPokemonQuest" -> CatchPokemonQuest.fromState(json, state, provider, group)
-                "HarvestApricornQuest" -> HarvestApricornQuest.fromState(json, state, provider, group)
-                "DefeatPokemonQuest" -> DefeatPokemonQuest.fromState(json, state, provider, group)
-                "IntPlaceholderQuest" -> IntPlaceholderQuest.fromState(json, state, provider, group)
-                "NicknamePokemonQuest" -> NicknamePokemonQuest.fromState(json, state, provider, group)
-                "TradePokemonQuest" -> TradePokemonQuest.fromState(json, state, provider, group)
-                "ReleasePokemonQuest" -> ReleasePokemonQuest.fromState(json, state, provider, group)
-                "EvolvePokemonQuest" -> EvolvePokemonQuest.fromState(json, state, provider, group)
-                "HasPermissionQuest" -> HasPermissionQuest.fromState(json, state, provider, group)
-                "HatchEggQuest" -> HatchEggQuest.fromState(json, state, provider, group)
-                else -> throw IllegalArgumentException("Unsupported quest type: $type")
-            }
-        }
+    abstract fun applyQuestState(state: JsonObject)
+
+    abstract fun saveSpecifics(): MutableMap<String, JsonElement>
+
+    fun saveDefaults(): MutableMap<String, JsonElement> {
+        val defaults = mutableMapOf<String, JsonElement>()
+        defaults["type"] = JsonPrimitive(type)
+        defaults["name"] = JsonPrimitive(name)
+        defaults["id"] = JsonPrimitive(id)
+        defaults["rewards"] = rewards.toJson()
+        defaults["rewardsClaimed"] = JsonPrimitive(rewardsClaimed)
+        return defaults
+    }
+
+    fun save(): kotlinx.serialization.json.JsonObject {
+        val defaults = saveDefaults()
+        val specifics = saveSpecifics()
+        defaults.putAll(specifics)
+        return kotlinx.serialization.json.JsonObject(defaults)
     }
 
 }
