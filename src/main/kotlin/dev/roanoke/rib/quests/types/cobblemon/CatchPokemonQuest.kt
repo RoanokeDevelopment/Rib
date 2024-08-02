@@ -71,34 +71,20 @@ class CatchPokemonQuest(name: String = "Default Catch Pokemon Quest Title",
 
     init {
         CobblemonEvents.POKEMON_CAPTURED.subscribe {
-            Rib.LOGGER.info("Pokemon Captured")
             if (!isActive()) {
                 return@subscribe
             }
 
-            Rib.LOGGER.info("Checking if player is in group")
             if (!group.includesPlayer(it.player)) {
-                Rib.LOGGER.info("Player isn't in Group")
                 return@subscribe
             }
 
-            Rib.LOGGER.info("Checking PokeMatch")
             if (!pokeMatch.matches(it.pokemon)) {
-                Rib.LOGGER.info("Didn't match PokeMatch")
                 return@subscribe
             }
 
             progress += 1
             this.notifyProgress()
-/*
-            if (group.includesPlayer(it.player) && pokeMatch.matches(it.pokemon)) {
-                Rib.LOGGER.info("Incremementing Progress")
-
-                progress += 1
-                this.notifyProgress()
-            }
-
- */
         }
     }
 
