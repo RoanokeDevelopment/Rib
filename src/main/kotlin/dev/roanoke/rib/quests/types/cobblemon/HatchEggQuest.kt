@@ -1,23 +1,24 @@
 package dev.roanoke.rib.quests.types.cobblemon
 
-import com.cobblemon.mod.common.api.events.CobblemonEvents
 import com.google.gson.JsonObject
 import dev.huli.huliscobblebreeding.events.BreedingEvents
-import dev.huli.huliscobblebreeding.events.EggHatchEvent
 import dev.roanoke.rib.Rib
 import dev.roanoke.rib.cobblemon.PokeMatch
 import dev.roanoke.rib.quests.Quest
+import dev.roanoke.rib.quests.QuestFactory
 import dev.roanoke.rib.quests.QuestGroup
 import dev.roanoke.rib.quests.QuestProvider
-import dev.roanoke.rib.rewards.RewardList
 import dev.roanoke.rib.utils.ItemBuilder
 import eu.pb4.sgui.api.elements.GuiElementBuilder
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonPrimitive
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.Text
 import java.util.*
 
 class HatchEggQuest(name: String = "Hatch Egg Quest Title",
                     id: String = UUID.randomUUID().toString(),
+                    type: String = "HatchEggQuest",
                     provider: QuestProvider,
                     group: QuestGroup,
                     var pokeMatch: PokeMatch = PokeMatch(),
@@ -25,55 +26,47 @@ class HatchEggQuest(name: String = "Hatch Egg Quest Title",
                     var amount: Int = 1,
                     var progress: Int = 0
 ) :
-    Quest(name, id, provider, group) {
+    Quest(name, id, type, provider, group) {
 
-    companion object : Quest.QuestFactory {
-        override fun fromState(json: JsonObject, state: JsonObject, provider: QuestProvider, group: QuestGroup): Quest {
-            val name = json.get("name").asString ?: "Hatch an Egg!"
+    companion object : QuestFactory {
+        override fun fromJson(json: JsonObject, state: JsonObject, provider: QuestProvider, group: QuestGroup): Quest {
 
-            val id = json.get("id")?.asString ?: UUID.randomUUID().toString()
+            val pokeMatch = PokeMatch.fromJson(
+                json.get("pokeMatch")?.asJsonObject ?: JsonObject()
+            )
 
-            var pokeMatch = PokeMatch()
-            if (json.has("pokeMatch")) {
-                pokeMatch = PokeMatch.fromJson(json.get("pokeMatch").asJsonObject)
-            }
+            val taskMessage = json.get("taskMessage")?.asString ?: "Hatch an Egg!"
 
-            var taskMessage = "Hatch an Egg!"
-            if (json.has("taskMessage")) {
-                taskMessage = json.get("taskMessage").asString
-            }
+            val amount = json.get("amount")?.asInt ?: 1
 
-            var amount = 3
-            if (json.has("amount")) {
-                amount = json.get("amount").asInt
-            }
+            val progress = state.get("progress")?.asInt ?: 0
 
-            val rRewards = RewardList.fromJson(json.get("rewards"))
-
-            val rRewardsClaimed = state.get("rewardsClaimed")?.asBoolean ?: false
-
-            var progress = 0
-            if (json.has("progress")) {
-                progress = state.get("progress")?.asInt ?: 0
-            }
-
-            return HatchEggQuest(name, id, provider, group, pokeMatch, taskMessage, amount, progress).apply {
-                rewards = rRewards;
-                rewardsClaimed = rRewardsClaimed
+            return HatchEggQuest(provider = provider,
+                group = group, pokeMatch = pokeMatch,
+                taskMessage = taskMessage, amount = amount,
+                progress = progress).apply {
+                    loadDefaultValues(json, state)
             }
         }
     }
 
-    override fun getState(): JsonObject {
+    override fun getQuestState(): JsonObject {
         return JsonObject().apply {
             addProperty("progress", progress)
-            addProperty("rewardsClaimed", rewardsClaimed)
         }
     }
 
-    override fun applyState(state: JsonObject) {
+    override fun applyQuestState(state: JsonObject) {
         progress = state.get("progress")?.asInt ?: progress
-        rewardsClaimed = state.get("rewardsClaimed")?.asBoolean ?: rewardsClaimed
+    }
+
+    override fun saveSpecifics(): MutableMap<String, JsonElement> {
+        val specifics: MutableMap<String, JsonElement> = mutableMapOf()
+        specifics["progress"] = JsonPrimitive(progress)
+        specifics["amount"] = JsonPrimitive(amount)
+        specifics["taskMessage"] = JsonPrimitive(taskMessage)
+        specifics["pokeMatch"] = pokeMatch.toJson()
+        return specifics
     }
 
     init {
