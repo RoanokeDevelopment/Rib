@@ -129,9 +129,20 @@ abstract class Quest(
         return taskMessage().copy().append(Text.literal(" ")).append(progressMessage())
     }
 
-    abstract fun getState(): JsonObject
+    abstract fun getQuestState(): JsonObject
 
-    abstract fun applyState(state: JsonObject)
+    fun getState(): JsonObject {
+        return getQuestState().apply {
+            addProperty("rewardsClaimed", rewardsClaimed)
+        }
+    }
+
+    fun applyState(state: JsonObject) {
+        rewardsClaimed = state.get("rewardsClaimed")?.asBoolean ?: rewardsClaimed
+        applyQuestState(state)
+    }
+
+    abstract fun applyQuestState(state: JsonObject)
 
     abstract fun saveSpecifics(): MutableMap<String, JsonElement>
 

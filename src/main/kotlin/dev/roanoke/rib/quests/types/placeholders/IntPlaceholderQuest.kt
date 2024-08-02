@@ -48,15 +48,11 @@ class IntPlaceholderQuest(name: String = "Default IntPlaceholder Quest Title",
         }
     }
 
-    override fun getState(): JsonObject {
-        return JsonObject().apply {
-            addProperty("rewardsClaimed", rewardsClaimed)
-        }
+    override fun getQuestState(): JsonObject {
+        return JsonObject()
     }
 
-    override fun applyState(state: JsonObject) {
-        rewardsClaimed = state.get("rewardsClaimed")?.asBoolean ?: rewardsClaimed
-    }
+    override fun applyQuestState(state: JsonObject) { }
 
     override fun saveSpecifics(): MutableMap<String, JsonElement> {
         val specifics: MutableMap<String, JsonElement> = mutableMapOf()

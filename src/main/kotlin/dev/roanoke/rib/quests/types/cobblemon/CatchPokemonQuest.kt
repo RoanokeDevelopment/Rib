@@ -32,25 +32,15 @@ class CatchPokemonQuest(name: String = "Default Catch Pokemon Quest Title",
     companion object : QuestFactory {
         override fun fromJson(json: JsonObject, state: JsonObject, provider: QuestProvider, group: QuestGroup): Quest {
 
-            var pokeMatch = PokeMatch()
-            if (json.has("pokeMatch")) {
-                pokeMatch = PokeMatch.fromJson(json.get("pokeMatch").asJsonObject)
-            }
+            val pokeMatch = PokeMatch.fromJson(
+                json.get("pokeMatch")?.asJsonObject ?: JsonObject()
+            )
 
-            var taskMessage = "Catch a pokemon!"
-            if (json.has("taskMessage")) {
-                taskMessage = json.get("taskMessage").asString
-            }
+            val taskMessage = json.get("taskMessage")?.asString ?: "Catch a Pokemon!"
 
-            var amount = 3
-            if (json.has("amount")) {
-                amount = json.get("amount").asInt
-            }
+            val amount = json.get("amount")?.asInt ?: 1
 
-            var progress = 0
-            if (json.has("progress")) {
-                progress = state.get("progress")?.asInt ?: 0
-            }
+            val progress = state.get("progress")?.asInt ?: 0
 
             return CatchPokemonQuest(provider = provider,
                 group = group, pokeMatch = pokeMatch,
@@ -61,16 +51,14 @@ class CatchPokemonQuest(name: String = "Default Catch Pokemon Quest Title",
         }
     }
 
-    override fun getState(): JsonObject {
+    override fun getQuestState(): JsonObject {
         return JsonObject().apply {
             addProperty("progress", progress)
-            addProperty("rewardsClaimed", rewardsClaimed)
         }
     }
 
-    override fun applyState(state: JsonObject) {
+    override fun applyQuestState(state: JsonObject) {
         progress = state.get("progress")?.asInt ?: progress
-        rewardsClaimed = state.get("rewardsClaimed")?.asBoolean ?: rewardsClaimed
     }
 
     override fun saveSpecifics(): MutableMap<String, JsonElement> {

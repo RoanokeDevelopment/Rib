@@ -49,16 +49,14 @@ class BreakBlockQuest(name: String = "Default Quest Title",
         }
     }
 
-    override fun getState(): JsonObject {
+    override fun getQuestState(): JsonObject {
         return JsonObject().apply {
             addProperty("progress", progress)
-            addProperty("rewardsClaimed", rewardsClaimed)
         }
     }
 
-    override fun applyState(state: JsonObject) {
+    override fun applyQuestState(state: JsonObject) {
         progress = state.get("progress")?.asInt ?: progress
-        rewardsClaimed = state.get("rewardsClaimed")?.asBoolean ?: rewardsClaimed
     }
 
     override fun saveSpecifics(): MutableMap<String, JsonElement> {
