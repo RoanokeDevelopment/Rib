@@ -1,5 +1,6 @@
 package dev.roanoke.rib
 
+import dev.roanoke.rib.callbacks.RegisterQuestCallback
 import dev.roanoke.rib.callbacks.RibInitCallback
 import dev.roanoke.rib.quests.QuestRegistry
 import dev.roanoke.rib.utils.*
@@ -60,6 +61,8 @@ class Rib : ModInitializer {
             }
 
             QuestRegistry.registerDefaultQuests()
+
+            RegisterQuestCallback.EVENT.invoker().interact()
 
             RibInitCallback.EVENT.invoker().interact()
 
