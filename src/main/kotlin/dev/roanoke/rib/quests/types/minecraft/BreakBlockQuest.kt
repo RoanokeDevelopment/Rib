@@ -6,7 +6,6 @@ import dev.roanoke.rib.quests.Quest
 import dev.roanoke.rib.quests.QuestFactory
 import dev.roanoke.rib.quests.QuestGroup
 import dev.roanoke.rib.quests.QuestProvider
-import dev.roanoke.rib.rewards.RewardList
 import dev.roanoke.rib.utils.ItemBuilder
 import eu.pb4.sgui.api.elements.GuiElementBuilder
 import kotlinx.serialization.json.JsonElement
