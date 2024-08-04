@@ -26,7 +26,7 @@ public class ItemBuilder {
         this.stack = new ItemStack(item);
     }
     public ItemBuilder(ItemStack item) {
-        this.stack = item;
+        this.stack = item.copy();
     }
 
     public ItemBuilder(String itemId) {
