@@ -58,7 +58,10 @@ class PlayerQuestGroup(
         Rib.server?.let { server ->
 
             val times: Title.Times = Title.Times.times(Duration.ofMillis(fadeIn), Duration.ofMillis(stayTime), Duration.ofMillis(fadeOut))
-            val titleComponent: Title = Title.title(Component.text(title), Component.text(subtitle), times)
+            val titleComponent: Title = Title.title(
+                Component.empty().append(Rib.Rib.parseText(title)),
+                Component.empty().append(Rib.Rib.parseText(subtitle)),
+                times)
 
             server.playerManager.playerList.forEach {
                 if (includesPlayer(it)) {
