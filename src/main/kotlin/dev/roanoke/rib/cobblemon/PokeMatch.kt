@@ -22,7 +22,7 @@ class PokeMatch(
 
             val species = json["species"]?.jsonPrimitive?.contentOrNull ?: ""
             val form = json["form"]?.jsonPrimitive?.contentOrNull ?: ""
-            val types = json["type"]?.jsonArray?.map {
+            val types = json["types"]?.jsonArray?.map {
                 it.jsonPrimitive.content
             } ?: listOf()
             val aspects = json["aspects"]?.jsonArray?.map {
@@ -74,10 +74,9 @@ class PokeMatch(
             if (pokemon.form.name.lowercase() != form) return false
         }
 
-        types.forEach {
-            Rib.LOGGER.info("PokeMatching Defined Type: $it")
+        types.forEach { pmt ->
             if (!pokemon.types.map { type -> type.name.lowercase() }
-                .contains(it.lowercase())) {
+                .contains(pmt.lowercase())) {
                 return false
             }
         }
