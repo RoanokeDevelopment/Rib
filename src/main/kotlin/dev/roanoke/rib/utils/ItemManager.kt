@@ -15,8 +15,13 @@ class ItemManager(
 
     private var items: MutableMap<String, ItemBuilder> = mutableMapOf()
 
+    fun reload() {
+        items.clear()
+        setup()
+    }
+
     fun setup() {
-        var file_exists = !itemsConfigPath.toFile().createNewFile()
+        val file_exists = !itemsConfigPath.toFile().createNewFile()
         if (file_exists) {
             loadItems(itemsConfigPath.toFile())
         } else {
@@ -48,31 +53,15 @@ class ItemManager(
             val itemName = entry.key
             val itemData = entry.value.asJsonObject
 
-            if (!itemData.has("id")) {
-                Rib.LOGGER.error("Failed to load item '${itemName}' from configuration");
-                return@forEach
+            val itemBuilder = ItemBuilder.fromJson(itemData)
+
+            if (itemBuilder == null) {
+                Rib.LOGGER.info("Failed to load Item from Config: $itemName")
+            } else {
+                Rib.LOGGER.info("Loaded Item from Config: ${itemName}")
+                items[itemName] = itemBuilder
             }
 
-            var itemBuilder = ItemBuilder(itemData.get("id").asString)
-
-            if (itemData.has("name")) {
-                itemBuilder.setCustomName((Rib.Rib.parseText(itemData.get("name").asString)))
-            }
-
-            if (itemData.has("customModelData")) {
-                itemBuilder.setCustomModelData(itemData.get("customModelData").asInt)
-            }
-
-            if (itemData.has("lore")) {
-                itemBuilder.addLore(
-                    itemData.getAsJsonArray("lore").map {
-                        Rib.Rib.parseText(it.asString)
-                    }
-                )
-            }
-
-            Rib.LOGGER.info("Loaded Item from Config: ${itemName}")
-            items[itemName] = itemBuilder
         }
     }
 

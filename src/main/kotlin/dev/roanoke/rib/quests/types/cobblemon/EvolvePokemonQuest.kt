@@ -88,7 +88,7 @@ class EvolvePokemonQuest(name: String = "Evolve Pokemon Quest",
     }
 
     init {
-        CobblemonEvents.EVOLUTION_COMPLETE.subscribe {
+        CobblemonEvents.EVOLUTION_ACCEPTED.subscribe {
             if (!isActive()) {
                 return@subscribe
             }

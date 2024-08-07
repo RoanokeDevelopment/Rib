@@ -37,48 +37,48 @@ public class ItemBuilder {
         this.stack = Registries.ITEM.get(identifier).getDefaultStack();
     }
 
-public static ItemBuilder fromJson(JsonObject itemData) {
-    if (!itemData.has("id")) {
-        Rib.LOGGER.debug("Failed to load Item from Json: {}", itemData.toString());
-        return null;
-    }
-
-    String id = itemData.get("id").getAsString();
-    var itemBuilder = new ItemBuilder(id);
-
-    if (itemData.has("name")) {
-        try {
-            Text name = Rib.Rib.INSTANCE.parseText(itemData.get("name").getAsString());
-            itemBuilder.setCustomName(name);
-        } catch (Exception e) {
-            Rib.LOGGER.error("Error parsing name for item '{}': {}", id, e.getMessage());
+    public static ItemBuilder fromJson(JsonObject itemData) {
+        if (!itemData.has("id")) {
+            Rib.LOGGER.debug("Failed to load Item from Json: {}", itemData.toString());
+            return null;
         }
-    }
 
-    if (itemData.has("customModelData")) {
-        itemBuilder.setCustomModelData(itemData.get("customModelData").getAsInt());
-    }
+        String id = itemData.get("id").getAsString();
+        var itemBuilder = new ItemBuilder(id);
 
-    if (itemData.has("lore")) {
-        List<Text> loreEntries = itemData.getAsJsonArray("lore").asList().stream()
-            .map(it -> {
-                try {
-                    return Rib.Rib.INSTANCE.parseText(it.getAsString());
-                } catch (Exception e) {
-                    Rib.LOGGER.error("Error parsing lore text: {}", e.getMessage());
-                    return null;
-                }
-            })
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
-
-        if (!loreEntries.isEmpty()) {
-            itemBuilder.addLore(loreEntries);
+        if (itemData.has("name")) {
+            try {
+                Text name = Rib.Rib.INSTANCE.parseText(itemData.get("name").getAsString());
+                itemBuilder.setCustomName(name);
+            } catch (Exception e) {
+                Rib.LOGGER.error("Error parsing name for item '{}': {}", id, e.getMessage());
+            }
         }
-    }
 
-    return itemBuilder;
-}
+        if (itemData.has("customModelData")) {
+            itemBuilder.setCustomModelData(itemData.get("customModelData").getAsInt());
+        }
+
+        if (itemData.has("lore")) {
+            List<Text> loreEntries = itemData.getAsJsonArray("lore").asList().stream()
+                .map(it -> {
+                    try {
+                        return Rib.Rib.INSTANCE.parseText(it.getAsString());
+                    } catch (Exception e) {
+                        Rib.LOGGER.error("Error parsing lore text: {}", e.getMessage());
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
+            if (!loreEntries.isEmpty()) {
+                itemBuilder.addLore(loreEntries);
+            }
+        }
+
+        return itemBuilder;
+    }
 
     public String getItemID() {
         return Registries.ITEM.getId(stack.getItem()).toString();
