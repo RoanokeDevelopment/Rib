@@ -1,5 +1,6 @@
 package dev.roanoke.rib.cobblemon
 
+import com.cobblemon.mod.common.Cobblemon
 import com.cobblemon.mod.common.api.pokemon.PokemonProperties
 import com.cobblemon.mod.common.item.PokemonItem
 import com.cobblemon.mod.common.pokemon.Pokemon
@@ -14,6 +15,8 @@ class PokeMatch(
     val form: String = "",
     val types: List<String> = listOf(),
     val aspects: List<String> = listOf(),
+    val ivs: Map<String, Int>? = mapOf(),
+    val evs: Map<String, Int>? = mapOf(),
     val shiny: Boolean? = null
 ) {
 
@@ -30,11 +33,21 @@ class PokeMatch(
             } ?: listOf()
             val shiny = json["shiny"]?.jsonPrimitive?.booleanOrNull
 
+            val ivs = json["ivs"]?.jsonObject?.map { entry ->
+                entry.key to entry.value.jsonPrimitive.int
+            }?.toMap()
+
+            val evs = json["evs"]?.jsonObject?.map { entry ->
+                entry.key to entry.value.jsonPrimitive.int
+            }?.toMap()
+
             return PokeMatch(
                 species = species,
                 form = form,
                 types = types,
                 aspects = aspects,
+                ivs = ivs,
+                evs = evs,
                 shiny = shiny
             )
         }
@@ -87,6 +100,18 @@ class PokeMatch(
             }
         }
 
+        ivs?.let {
+            if (!pokemon.ivs.matchesMap(ivs)) {
+                return false
+            }
+        }
+
+        evs?.let {
+            if (!pokemon.evs.matchesMap(evs)) {
+                return false
+            }
+        }
+
         return pokemon.aspects.containsAll(aspects)
 
     }
@@ -100,6 +125,16 @@ class PokeMatch(
         }
         match["aspects"] = JsonArray(aspects.map { JsonPrimitive(it) })
         match["types"] = JsonArray(types.map { JsonPrimitive(it) })
+
+        ivs?.let {
+            val ivsJson = JsonObject(it.map { (key, value) -> key to JsonPrimitive(value) }.toMap())
+            match["ivs"] = ivsJson
+        }
+        evs?.let {
+            val evsJson = JsonObject(it.map { (key, value) -> key to JsonPrimitive(value) }.toMap())
+            match["evs"] = evsJson
+        }
+
         return JsonObject(match)
     }
 }
