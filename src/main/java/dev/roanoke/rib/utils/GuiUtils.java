@@ -40,6 +40,13 @@ public class GuiUtils {
         String moveThree = pokemon.getMoveSet().getMoves().size() >= 3 ? pokemon.getMoveSet().get(2).getDisplayName().getString() : "None";
         String moveFour = pokemon.getMoveSet().getMoves().size() >= 4 ? pokemon.getMoveSet().get(3).getDisplayName().getString() : "None";
 
+        // defualt male
+        String genderIndicator = "♂";
+        switch (pokemon.getGender()) {
+            case GENDERLESS -> genderIndicator = "⚲";
+            case FEMALE -> genderIndicator = "♀";
+        }
+
         return new ItemBuilder(PokemonItem.from(pokemon, 1))
                 .hideAdditional()
                 .addLore(List.of(
@@ -67,7 +74,9 @@ public class GuiUtils {
                         Text.literal(" + ").append(Text.literal(moveFour).formatted(Formatting.WHITE))
                 ))
                 .setCustomName(
-                        pokemon.getDisplayName().formatted(Formatting.LIGHT_PURPLE).append(Rib.Rib.INSTANCE.parseText("<reset> <white>(lvl " + pokemon.getLevel() + ")"))
+                        pokemon.getDisplayName().formatted(Formatting.LIGHT_PURPLE).append(
+                                Rib.Rib.INSTANCE.parseText(" " + genderIndicator)
+                        ).append(Rib.Rib.INSTANCE.parseText("<reset> <white>(lvl " + pokemon.getLevel() + ")"))
                 )
                 .build();
     }
