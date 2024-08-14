@@ -136,7 +136,7 @@ public class ItemBuilder {
     }
 
     public ItemStack build() {
-        return this.stack;
+        return this.stack.copy();
     }
 
     public GuiElementBuilder gbuild() {

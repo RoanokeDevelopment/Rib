@@ -32,26 +32,17 @@ class DefeatPokemonQuest(name: String = "Default Defeat Pokemon Quest Title",
         override fun fromJson(json: JsonObject, state: JsonObject, provider: QuestProvider, group: QuestGroup): Quest {
 
             var pokeMatch = PokeMatch()
-            if (json.has("pokeMatch")) {
-                pokeMatch = PokeMatch.fromJson(json.get("pokeMatch").asJsonObject)
+            json["pokeMatch"]?.let {
+                pokeMatch = PokeMatch.fromJson(it.asJsonObject)
             }
 
-            var taskMessage = "Defeat a Pokemon!"
-            if (json.has("taskMessage")) {
-                taskMessage = json.get("taskMessage").asString
-            }
+            val taskMessage = json["taskMessage"]?.asString ?: "Defeat a Pokemon"
 
-            var amount = 3
-            if (json.has("amount")) {
-                amount = json.get("amount").asInt
-            }
+            val amount = json["amount"]?.asInt ?: 1
 
-            var progress = 0
-            if (state.has("progress")) {
-                progress = state.get("progress")?.asInt ?: 0
-            }
+            val progress = state["progress"]?.asInt ?: 0
 
-            return CatchPokemonQuest(provider = provider,
+            return DefeatPokemonQuest(provider = provider,
                 group = group, pokeMatch = pokeMatch,
                 taskMessage = taskMessage, amount = amount,
                 progress = progress).apply {
