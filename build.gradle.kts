@@ -40,7 +40,7 @@ dependencies {
     modImplementation("eu.pb4:sgui:1.2.2+1.20")
     include("eu.pb4:sgui:1.2.2+1.20")
 
-    modImplementation("com.cobblemon:fabric:1.5.0+1.20.1-SNAPSHOT")
+    modImplementation("com.cobblemon:fabric:1.5.2+1.20.1")
 
     modImplementation("net.luckperms:api:5.4")
 

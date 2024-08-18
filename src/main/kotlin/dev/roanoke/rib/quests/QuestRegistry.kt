@@ -38,6 +38,7 @@ object QuestRegistry {
         QuestRegistry.registerQuestType("TradePokemonQuest", TradePokemonQuest.Companion)
         QuestRegistry.registerQuestType("ReleasePokemonQuest", ReleasePokemonQuest.Companion)
         QuestRegistry.registerQuestType("EvolvePokemonQuest", EvolvePokemonQuest.Companion)
+        QuestRegistry.registerQuestType("ReviveFossilQuest", ReviveFossilQuest.Companion)
 
         QuestRegistry.registerQuestType("IntPlaceholderQuest", IntPlaceholderQuest.Companion)
         QuestRegistry.registerQuestType("HasPermissionQuest", HasPermissionQuest.Companion)
