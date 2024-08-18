@@ -119,7 +119,9 @@ open class ConfiguredGUI(
             }
         }
 
-        gui.title = Rib.Rib.parseText(title)
+        if (title != "") {
+            gui.title = Rib.Rib.parseText(title)
+        }
 
         val paginatedElementCount = getPaginatedElementCount(elements)
         val page = getPage(requestedPage, paginatedElementCount)
