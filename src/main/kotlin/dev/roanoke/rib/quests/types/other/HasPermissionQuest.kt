@@ -10,6 +10,7 @@ import dev.roanoke.rib.utils.ItemBuilder
 import eu.pb4.sgui.api.elements.GuiElementBuilder
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonPrimitive
+import net.minecraft.item.Items
 import net.minecraft.registry.Registries
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.Text
@@ -29,11 +30,11 @@ class HasPermissionQuest(name: String = "Default Has Permission Quest Title",
     companion object : QuestFactory {
         override fun fromJson(json: JsonObject, state: JsonObject, provider: QuestProvider, group: QuestGroup): Quest {
 
-            val permission = json.get("permission").asString
+            val permission = json.get("permission")?.asString ?: ""
 
-            val item = ItemBuilder.fromJson(json.get("item").asJsonObject)
+            val item = ItemBuilder.fromJson(json.get("item")?.asJsonObject ?: JsonObject()) ?: ItemBuilder(Items.STONE)
 
-            val taskMessage = json.get("taskMessage").asString
+            val taskMessage = json.get("taskMessage")?.asString ?: ""
 
             return HasPermissionQuest(
                 provider = provider, group = group,

@@ -11,11 +11,15 @@ import net.minecraft.screen.ScreenHandlerType
 import net.minecraft.server.network.ServerPlayerEntity
 import java.nio.file.Path
 
-class ConfiguredGUI(
+open class ConfiguredGUI(
     val id: String,
     val guiType: GuiType,
     val guiList: List<String>,
-    val keys: Map<String, ItemBuilder>
+    val keys: Map<String, ItemBuilder>,
+    val paginated: Boolean = false,
+    val backKey: String = "<",
+    val forwardKey: String = ">",
+    val paginatedElement: String = "X"
 ) {
 
     companion object {
@@ -50,12 +54,6 @@ class ConfiguredGUI(
 
 
     fun getGuiElementFromKey(key: String): GuiElementBuilder {
-        //Rib.LOGGER.info("Looking for key ${key} in ConfiguredGUI Keys...")
-        //Rib.LOGGER.info("Keys available: ")
-
-        //keys.forEach {
-            //Rib.LOGGER.info(" - ${it.key} : ${it.value.toString()}")
-        //}
 
         val item = keys[key] ?: ItemBuilder("minecraft:dirt")
 
@@ -69,30 +67,19 @@ class ConfiguredGUI(
             }
         }
 
-        //Rib.LOGGER.info("Getting GUI: $id")
-        //Rib.LOGGER.info("$guiList")
-
         val elementIndex: MutableMap<String, Int> = mutableMapOf();
         elements.keys.forEach { elementIndex[it] = 0 }
         keys.keys.forEach { elementIndex[it] = 0 }
 
         for ((index, key) in guiList.withIndex()) {
-            //Rib.LOGGER.info("\n\nIndex: $index\nKey: $key")
             if (elements.containsKey(key)) {
-                //Rib.LOGGER.info("Elements contained key ($key)")
                 if (elements[key]!!.size > elementIndex[key]!!) {
-                    //Rib.LOGGER.info("Element size (${elements[key]!!.size}) bigger than element index ($elementIndex)")
                     gui.setSlot(index, elements[key]!![elementIndex[key]!!])
                     elementIndex[key] = elementIndex[key]!! + 1
-                    //Rib.LOGGER.info("So placing element and increasing index")
                 } else {
-                    //Rib.LOGGER.info("Element size (${elements[key]!!.size}) NOT bigger than element index ($elementIndex)")
-                    // COULD ADD A SEPARATE PLACEHOLDER ITEM VALUE HERE
                     gui.setSlot(index, getGuiElementFromKey(key))
-                    //Rib.LOGGER.info("So placing default fill item (i.e., getting key from item definitions)")
                 }
             } else {
-                //Rib.LOGGER.info("Elements didn't contain key ($key), using fallback items")
                 gui.setSlot(index, getGuiElementFromKey(key))
             }
         }

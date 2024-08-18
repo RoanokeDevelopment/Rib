@@ -2,12 +2,14 @@ package dev.roanoke.rib.utils
 
 import com.google.gson.JsonObject
 import dev.roanoke.rib.Rib
+import dev.roanoke.rib.cereal.JsonConv
 import net.minecraft.entity.Entity
 import net.minecraft.registry.RegistryKey
 import net.minecraft.registry.RegistryKeys
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.Identifier
+import net.minecraft.util.math.Vec3d
 
 class Location(
     val world: ServerWorld,
@@ -15,6 +17,8 @@ class Location(
     val y: Double,
     val z: Double
 ) {
+
+    val vec3d: Vec3d = Vec3d(x, y, z)
 
     companion object {
         fun fromJson(json: JsonObject): Location? {
@@ -40,6 +44,12 @@ class Location(
 
             return Location(world, x, y, z)
 
+        }
+
+        fun fromKson(kson: kotlinx.serialization.json.JsonObject): Location? {
+            return fromJson(
+                JsonConv.kotlinJsonToGsonJson(kson)
+            )
         }
 
         fun fromMap(map: MutableMap<String, Any>): Location? {
@@ -71,6 +81,12 @@ class Location(
         jsonObj.addProperty("z", z)
         jsonObj.addProperty("world", world.registryKey.value.toString())
         return jsonObj
+    }
+
+    fun toKsonObject(): kotlinx.serialization.json.JsonObject {
+        return JsonConv.gsonToKotlinJson(
+            toJsonObject()
+        )
     }
 
     fun toMap(): Map<String, Any> {

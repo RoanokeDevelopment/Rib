@@ -27,7 +27,8 @@ abstract class Quest(
     var provider: QuestProvider,
     var group: QuestGroup,
     var rewards: RewardList = RewardList(),
-    var rewardsClaimed: Boolean = false
+    var rewardsClaimed: Boolean = false,
+    var requiresPermission: String = ""
 ): QuestLike, ButtonElement {
 
     override fun getButton(player: ServerPlayerEntity): GuiElementBuilder {
@@ -46,6 +47,14 @@ abstract class Quest(
         id = definition.get("id")?.asString ?: UUID.randomUUID().toString()
         rewards = RewardList.fromJson(definition.get("rewards"))
         rewardsClaimed = state.get("rewardsClaimed")?.asBoolean ?: false
+        requiresPermission = definition.get("requiresPermission")?.asString ?: ""
+    }
+
+    fun completedRequiredPermission(): Boolean {
+        if (requiresPermission == "") return true
+        return group.getOnlinePlayers().any {
+            Rib.perm.hasPermission(it, requiresPermission)
+        }
     }
 
     fun getButtonCallback(): (ServerPlayerEntity) -> Unit {
@@ -153,6 +162,7 @@ abstract class Quest(
         defaults["id"] = JsonPrimitive(id)
         defaults["rewards"] = rewards.toJson()
         defaults["rewardsClaimed"] = JsonPrimitive(rewardsClaimed)
+        defaults["requiresPermission"] = JsonPrimitive(requiresPermission)
         return defaults
     }
 
