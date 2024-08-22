@@ -84,6 +84,15 @@ public class ItemBuilder {
         return Registries.ITEM.getId(stack.getItem()).toString();
     }
 
+    public boolean matches(ItemStack stack) {
+        if (!stack.isOf(stack.getItem())) {
+            return false;
+        }
+
+        return new ItemBuilder(stack).getCustomModelData() == this.getCustomModelData();
+
+    }
+
     public int getCustomModelData() {
         NbtCompound tag = stack.getOrCreateNbt();
         return tag.getInt("CustomModelData");
