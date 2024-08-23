@@ -85,12 +85,12 @@ public class ItemBuilder {
     }
 
     public boolean matches(ItemStack stack) {
-        if (!stack.isOf(stack.getItem())) {
-            return false;
+
+        if (stack.isOf(this.build().getItem())) {
+            return new ItemBuilder(stack).getCustomModelData() == this.getCustomModelData();
         }
 
-        return new ItemBuilder(stack).getCustomModelData() == this.getCustomModelData();
-
+        return false;
     }
 
     public int getCustomModelData() {
