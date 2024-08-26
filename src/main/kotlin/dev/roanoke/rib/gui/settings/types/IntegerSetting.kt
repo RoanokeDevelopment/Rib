@@ -1,5 +1,7 @@
 package dev.roanoke.rib.gui.settings.types
 
+import dev.roanoke.rib.Rib
+import dev.roanoke.rib.gui.settings.BaseSetting
 import dev.roanoke.rib.gui.settings.Setting
 import dev.roanoke.rib.gui.settings.SettingsManager
 import eu.pb4.sgui.api.ClickType
@@ -15,9 +17,11 @@ class IntegerSetting(
     override val name: String,
     private val getter: () -> Int,
     private val setter: (Int) -> Unit
-) : Setting<Int> {
+) : BaseSetting<Int>() {
 
     override var settingsManager: SettingsManager? = null
+
+    override var description: String = ""
 
     override fun getValue(): Int = getter()
 
@@ -26,12 +30,9 @@ class IntegerSetting(
     }
 
     override fun createGuiElement(player: ServerPlayerEntity): GuiElementBuilder {
-        return GuiElementBuilder(Items.PAPER)
-            .setName(Text.literal(name))
-            .setLore(listOf(
-                Text.literal("Current: ${getValue()}"),
-                Text.literal("Click to edit")
-            ))
+        return guiElement
+            .setName(Rib.Rib.parseText(name))
+            .setLore(getLore())
             .setCallback { _, _, _ ->
                 openAnvilGui(player) { newValue ->
                         setValue(newValue)
@@ -39,6 +40,20 @@ class IntegerSetting(
                         settingsManager?.openMenu(player)
                 }
             }
+    }
+
+    override fun getLore(): List<Text> {
+        val lore: MutableList<Text> = mutableListOf()
+        lore.addAll(
+            getDescriptionLore()
+        )
+        lore.add(
+            Rib.Rib.parseText("Currently: ${getValue()}")
+        )
+        lore.add(
+            Rib.Rib.parseText("Click to edit!")
+        )
+        return lore
     }
 
     private fun openAnvilGui(player: ServerPlayerEntity, onInput: (Int) -> Unit) {

@@ -1,5 +1,7 @@
 package dev.roanoke.rib.gui.settings.types
 
+import dev.roanoke.rib.Rib
+import dev.roanoke.rib.gui.settings.BaseSetting
 import dev.roanoke.rib.gui.settings.Setting
 import dev.roanoke.rib.gui.settings.SettingsManager
 import dev.roanoke.rib.utils.Location
@@ -13,7 +15,7 @@ class LocationSetting(
     override val name: String,
     private val getter: () -> Location?,
     private val setter: (Location?) -> Unit
-) : Setting<Location?> {
+) : BaseSetting<Location?>() {
 
     override var settingsManager: SettingsManager? = null
 
@@ -23,13 +25,12 @@ class LocationSetting(
         setter(value)
     }
 
+    override var guiElement: GuiElementBuilder = GuiElementBuilder(Items.MAP)
+
     override fun createGuiElement(player: ServerPlayerEntity): GuiElementBuilder {
-        return GuiElementBuilder(Items.LEVER)
-            .setName(Text.literal(name))
-            .setLore(listOf(
-                Text.literal("Left click to visit Location"),
-                Text.literal("Right click to set to your current Location")
-            ))
+        return guiElement
+            .setName(Rib.Rib.parseText(name))
+            .setLore(getLore())
             .setCallback { _, y: ClickType, _ ->
                 if (y.isLeft) {
                     getValue()?.teleportPlayer(player)
@@ -40,4 +41,19 @@ class LocationSetting(
                 settingsManager?.openMenu(player)
             }
     }
+
+    override fun getLore(): List<Text> {
+        val lore: MutableList<Text> = mutableListOf()
+        lore.addAll(
+            getDescriptionLore()
+        )
+        lore.add(
+            Rib.Rib.parseText("Left click to visit Location!")
+        )
+        lore.add(
+            Rib.Rib.parseText("Right click to set to your current LocatioN!")
+        )
+        return lore
+    }
+
 }

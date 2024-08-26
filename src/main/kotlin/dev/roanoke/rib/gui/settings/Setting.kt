@@ -8,6 +8,8 @@ interface Setting<T> {
     val name: String
     var settingsManager: SettingsManager?
 
+    var description: String
+
     fun getValue(): T
     fun setValue(value: T)
     fun createGuiElement(player: ServerPlayerEntity): GuiElementBuilder
