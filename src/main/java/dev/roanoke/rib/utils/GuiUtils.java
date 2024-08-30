@@ -34,6 +34,7 @@ public class GuiUtils {
         gui.close();
     }
 
+    @Deprecated(forRemoval = true)
     public static ItemStack getPokemonGuiElement(Pokemon pokemon) {
         String moveOne = pokemon.getMoveSet().getMoves().size() >= 1 ? pokemon.getMoveSet().get(0).getDisplayName().getString() : "None";
         String moveTwo = pokemon.getMoveSet().getMoves().size() >= 2 ? pokemon.getMoveSet().get(1).getDisplayName().getString() : "None";
