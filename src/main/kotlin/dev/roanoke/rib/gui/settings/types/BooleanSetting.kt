@@ -31,6 +31,7 @@ class BooleanSetting(
             .setLore(getLore())
             .setCallback { _, _, _ ->
                 setValue(!getValue())
+                settingsManager?.save()
                 player.sendMessage(Text.literal("$name set to ${if (getValue()) "Enabled" else "Disabled"}"))
                 settingsManager?.openMenu(player)
             }

@@ -37,6 +37,7 @@ class LocationSetting(
                 }
                 if (y.isRight) {
                     setValue(Location.fromEntity(player))
+                    settingsManager?.save()
                 }
                 settingsManager?.openMenu(player)
             }
