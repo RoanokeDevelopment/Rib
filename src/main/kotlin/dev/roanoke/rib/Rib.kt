@@ -1,8 +1,10 @@
 package dev.roanoke.rib
 
 import dev.roanoke.rib.callbacks.RegisterQuestCallback
+import dev.roanoke.rib.callbacks.RegisterRequirementCallback
 import dev.roanoke.rib.callbacks.RibInitCallback
 import dev.roanoke.rib.quests.QuestRegistry
+import dev.roanoke.rib.requirements.RequirementRegistry
 import dev.roanoke.rib.utils.*
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
@@ -61,8 +63,10 @@ class Rib : ModInitializer {
             }
 
             QuestRegistry.registerDefaultQuests()
-
             RegisterQuestCallback.EVENT.invoker().interact()
+
+            RequirementRegistry.registerDefaults()
+            RegisterRequirementCallback.EVENT.invoker().interact()
 
             RibInitCallback.EVENT.invoker().interact()
 
