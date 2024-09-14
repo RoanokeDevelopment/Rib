@@ -1,10 +1,7 @@
 package dev.roanoke.rib.requirements
 
 import dev.roanoke.rib.Rib
-import dev.roanoke.rib.requirements.types.MultiRequirement
-import dev.roanoke.rib.requirements.types.PermissionRequirement
-import dev.roanoke.rib.requirements.types.PokemonPropertiesRequirement
-import dev.roanoke.rib.requirements.types.TeamLevelRequirement
+import dev.roanoke.rib.requirements.types.*
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonPrimitive
@@ -33,6 +30,7 @@ object RequirementRegistry {
         register("PokemonPropertiesRequirement", PokemonPropertiesRequirement.Companion)
         register("PermissionRequirement", PermissionRequirement.Companion)
         register("MultiRequirement", MultiRequirement.Companion)
+        register("HasBattleablePokemonRequirement", HasBattleablePokemonRequirement.Companion)
     }
 
 }
