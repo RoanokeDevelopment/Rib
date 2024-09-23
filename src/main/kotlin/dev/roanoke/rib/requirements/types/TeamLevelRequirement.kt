@@ -40,7 +40,7 @@ class TeamLevelRequirement(
         when (comparison) {
             LevelComparison.MINIMUM -> {
                 player.party().forEach {
-                    if (it.level <= level) {
+                    if (it.level < level) {
                         return false
                     }
                 }
@@ -54,7 +54,7 @@ class TeamLevelRequirement(
             }
             LevelComparison.MAXIMUM -> {
                 player.party().forEach {
-                    if (it.level >= level) {
+                    if (it.level > level) {
                         return false
                     }
                 }
