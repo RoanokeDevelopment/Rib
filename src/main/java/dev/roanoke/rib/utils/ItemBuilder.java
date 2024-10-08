@@ -155,6 +155,9 @@ public class ItemBuilder {
     public JsonObject toJson() {
         JsonObject itemData = new JsonObject();
         itemData.addProperty("id", getItemID());
+        if (getCustomModelData() != 0) {
+            itemData.addProperty("customModelData", getCustomModelData());
+        }
         return itemData;
     }
 
