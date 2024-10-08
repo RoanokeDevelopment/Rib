@@ -3,6 +3,7 @@ package dev.roanoke.rib
 import dev.roanoke.rib.callbacks.RegisterQuestCallback
 import dev.roanoke.rib.callbacks.RegisterRequirementCallback
 import dev.roanoke.rib.callbacks.RibInitCallback
+import dev.roanoke.rib.callbacks.RibPreInitCallback
 import dev.roanoke.rib.quests.QuestRegistry
 import dev.roanoke.rib.requirements.RequirementRegistry
 import dev.roanoke.rib.utils.*
@@ -68,6 +69,7 @@ class Rib : ModInitializer {
             RequirementRegistry.registerDefaults()
             RegisterRequirementCallback.EVENT.invoker().interact()
 
+            RibPreInitCallback.EVENT.invoker().interact() // for crib to hook into location stuff etc
             RibInitCallback.EVENT.invoker().interact()
 
         }

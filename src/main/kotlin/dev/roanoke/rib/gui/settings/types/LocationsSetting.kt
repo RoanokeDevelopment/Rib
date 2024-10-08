@@ -3,8 +3,9 @@ package dev.roanoke.rib.gui.settings.types
 import dev.roanoke.rib.Rib
 import dev.roanoke.rib.gui.settings.BaseSetting
 import dev.roanoke.rib.gui.settings.SettingsManager
+import dev.roanoke.rib.location.Location
+import dev.roanoke.rib.location.LocationRegistry
 import dev.roanoke.rib.utils.GuiUtils
-import dev.roanoke.rib.utils.Location
 import dev.roanoke.rib.utils.PaginatedSection
 import dev.roanoke.rib.utils.SlotRange
 import eu.pb4.sgui.api.ClickType
@@ -69,7 +70,7 @@ class LocationsSetting(
             .setName(Rib.Rib.parseText("<green>Add Current Location"))
             .setCallback { _, _, _ ->
                 val newLocations = getValue()
-                newLocations.add(Location.fromEntity(player))
+                newLocations.add(LocationRegistry.fromEntity(player))
                 setValue(newLocations)
                 settingsManager?.save()
                 openLocationsGui(player)

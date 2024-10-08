@@ -2,9 +2,9 @@ package dev.roanoke.rib.gui.settings.types
 
 import dev.roanoke.rib.Rib
 import dev.roanoke.rib.gui.settings.BaseSetting
-import dev.roanoke.rib.gui.settings.Setting
 import dev.roanoke.rib.gui.settings.SettingsManager
-import dev.roanoke.rib.utils.Location
+import dev.roanoke.rib.location.Location
+import dev.roanoke.rib.location.LocationRegistry
 import eu.pb4.sgui.api.ClickType
 import eu.pb4.sgui.api.elements.GuiElementBuilder
 import net.minecraft.item.Items
@@ -36,7 +36,7 @@ class LocationSetting(
                     getValue()?.teleportPlayer(player)
                 }
                 if (y.isRight) {
-                    setValue(Location.fromEntity(player))
+                    setValue(LocationRegistry.fromEntity(player))
                     settingsManager?.save()
                 }
                 settingsManager?.openMenu(player)

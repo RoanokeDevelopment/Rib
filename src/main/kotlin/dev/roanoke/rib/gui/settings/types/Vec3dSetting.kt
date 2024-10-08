@@ -3,7 +3,6 @@ package dev.roanoke.rib.gui.settings.types
 import dev.roanoke.rib.Rib
 import dev.roanoke.rib.gui.settings.BaseSetting
 import dev.roanoke.rib.gui.settings.SettingsManager
-import dev.roanoke.rib.utils.Location
 import eu.pb4.sgui.api.ClickType
 import eu.pb4.sgui.api.elements.GuiElementBuilder
 import net.minecraft.item.Items
