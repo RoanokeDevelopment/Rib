@@ -4,6 +4,7 @@ import dev.roanoke.rib.callbacks.RegisterQuestCallback
 import dev.roanoke.rib.callbacks.RegisterRequirementCallback
 import dev.roanoke.rib.callbacks.RibInitCallback
 import dev.roanoke.rib.callbacks.RibPreInitCallback
+import dev.roanoke.rib.gui.configurable.CGuiManager
 import dev.roanoke.rib.quests.QuestRegistry
 import dev.roanoke.rib.requirements.RequirementRegistry
 import dev.roanoke.rib.utils.*
@@ -26,6 +27,11 @@ import org.slf4j.LoggerFactory
 class Rib : ModInitializer {
 
     companion object {
+
+        val MAIN_DIR = FabricLoader.getInstance().configDir.resolve("Rib")
+        val GUI_DIR = MAIN_DIR.resolve("GUI")
+        val MENU_DIR = GUI_DIR.resolve("Menus")
+
         @JvmField
         var LOGGER: Logger = LoggerFactory.getLogger("Rib")
         @JvmField
@@ -33,11 +39,12 @@ class Rib : ModInitializer {
         @JvmField
         var luckperms: LuckPerms? = null
         @JvmField
-        var config: Config = Config.load(FabricLoader.getInstance().configDir.resolve("ggyms/config.json").toFile())
-        @JvmField
         var perm: PermissionManager = PermissionManager()
         @JvmField
         var server: MinecraftServer? = null
+
+        val GUIs: CGuiManager = CGuiManager(MENU_DIR, GUI_DIR.resolve("item_definitions.json"))
+
     }
 
     object Rib {
@@ -52,6 +59,10 @@ class Rib : ModInitializer {
     }
 
     override fun onInitialize() {
+
+        FileUtils.copyResourceToFile("/rib/gui/menu/generic_manage.json", MENU_DIR.resolve("generic_manage.json"))
+        FileUtils.copyResourceToFile("/rib/gui/menu/generic_paginated.json", MENU_DIR.resolve("generic_paginated.json"))
+        FileUtils.copyResourceToFile("/rib/gui/item_definitions.json", GUI_DIR.resolve("item_definitions.json"))
 
         ServerLifecycleEvents.SERVER_STARTED.register {
             LOGGER.info("[RIB] Initialising Server, Adventure, LuckPerms")
@@ -70,6 +81,8 @@ class Rib : ModInitializer {
             RegisterRequirementCallback.EVENT.invoker().interact()
 
             RibPreInitCallback.EVENT.invoker().interact() // for crib to hook into location stuff etc
+
+            GUIs.setup()
             RibInitCallback.EVENT.invoker().interact()
 
         }

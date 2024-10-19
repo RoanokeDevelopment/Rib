@@ -18,6 +18,16 @@ object RequirementRegistry {
         requirementFactories[type] = factory
     }
 
+    fun getTypes(): List<String> {
+        return requirementFactories.keys.toList()
+    }
+
+    fun getRequirements(): List<Requirement> {
+        return requirementFactories.values.map {
+            it.fromKson(JsonObject(mapOf()))
+        }
+    }
+
     fun getRequirement(json: JsonObject): Requirement {
         val type = json["type"]?.jsonPrimitive?.contentOrNull ?: throw IllegalArgumentException("Requirement has no type field!")
 

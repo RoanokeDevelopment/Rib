@@ -1,16 +1,17 @@
 package dev.roanoke.rib.requirements.types
 
 import dev.roanoke.rib.Rib
+import dev.roanoke.rib.gui.settings.SettingsManager
+import dev.roanoke.rib.gui.settings.types.StringSetting
 import dev.roanoke.rib.requirements.Requirement
 import dev.roanoke.rib.requirements.RequirementFactory
-import dev.roanoke.rib.requirements.RequirementRegistry
 import dev.roanoke.rib.utils.LoreLike
 import kotlinx.serialization.json.*
 import net.minecraft.server.network.ServerPlayerEntity
 
 class PermissionRequirement(
-    val permission: String,
-    val prompt: String
+    var permission: String,
+    var prompt: String
 ): Requirement("PermissionRequirement") {
 
     companion object : RequirementFactory {
@@ -22,6 +23,18 @@ class PermissionRequirement(
             )
         }
 
+    }
+
+    init {
+        registerSettings()
+    }
+
+    override fun registerSettings() {
+        settings = SettingsManager(this)
+        settings.addSettings(
+            StringSetting("Prompt", { prompt }, { prompt = it }),
+            StringSetting("Permission", { permission }, { permission = it })
+        )
     }
 
     override fun passesRequirement(player: ServerPlayerEntity): Boolean {
@@ -41,6 +54,9 @@ class PermissionRequirement(
             "permission" to JsonPrimitive(permission),
             "prompt" to JsonPrimitive(prompt)
         )
+    }
+
+    override fun save() {
     }
 
 }

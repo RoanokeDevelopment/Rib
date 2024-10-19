@@ -1,6 +1,7 @@
 package dev.roanoke.rib.requirements.types
 
 import com.cobblemon.mod.common.util.party
+import dev.roanoke.rib.gui.settings.SettingsManager
 import dev.roanoke.rib.requirements.Requirement
 import dev.roanoke.rib.requirements.RequirementFactory
 import dev.roanoke.rib.requirements.RequirementRegistry
@@ -16,6 +17,14 @@ class HasBattleablePokemonRequirement: Requirement("HasBattleablePokemonRequirem
             return HasBattleablePokemonRequirement()
         }
 
+    }
+
+    init {
+        registerSettings()
+    }
+
+    override fun registerSettings() {
+        settings = SettingsManager(this)
     }
 
     override fun passesRequirement(player: ServerPlayerEntity): Boolean {
@@ -35,6 +44,10 @@ class HasBattleablePokemonRequirement: Requirement("HasBattleablePokemonRequirem
 
     override fun saveSpecifics(): MutableMap<String, JsonElement> {
         return mutableMapOf()
+    }
+
+    override fun save() {
+        TODO("Not yet implemented")
     }
 
 }

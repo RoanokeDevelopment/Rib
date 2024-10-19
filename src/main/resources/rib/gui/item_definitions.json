@@ -1,0 +1,18 @@
+{
+  "defaultFillItem": {
+    "id": "minecraft:black_stained_glass_pane",
+    "name": ""
+  },
+  "defaultElementFillItem": {
+    "id": "minecraft:gray_stained_glass_pane",
+    "name": ""
+  },
+  "forwardButton": {
+    "id": "minecraft:arrow",
+    "name": "Next Page"
+  },
+  "backButton": {
+    "id": "minecraft:arrow",
+    "name": "Previous Page"
+  }
+}

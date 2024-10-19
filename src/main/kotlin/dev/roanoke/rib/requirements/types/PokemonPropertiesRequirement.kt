@@ -2,6 +2,7 @@ package dev.roanoke.rib.requirements.types
 
 import com.cobblemon.mod.common.api.pokemon.PokemonProperties
 import com.cobblemon.mod.common.util.party
+import dev.roanoke.rib.gui.settings.SettingsManager
 import dev.roanoke.rib.requirements.Requirement
 import dev.roanoke.rib.requirements.RequirementFactory
 import dev.roanoke.rib.utils.LoreLike
@@ -36,6 +37,14 @@ class PokemonPropertiesRequirement(
 
     }
 
+    init {
+        registerSettings()
+    }
+
+    override fun registerSettings() {
+        settings = SettingsManager(this)
+    }
+
     override fun passesRequirement(player: ServerPlayerEntity): Boolean {
         val party = player.party()
         when(listType) {
@@ -67,6 +76,9 @@ class PokemonPropertiesRequirement(
             "list" to JsonArray(list.map { JsonPrimitive(it) }),
             "listType" to JsonPrimitive(listType.name)
         )
+    }
+
+    override fun save() {
     }
 
 }

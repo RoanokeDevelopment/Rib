@@ -1,0 +1,20 @@
+{
+  "id": "generic_manage",
+  "gui_type": "G9X5",
+  "paginated": true,
+  "paginatedElement": "X",
+  "gui": [
+    "#########",
+    "#B#XXXXX#",
+    "#B#XXXXX#",
+    "#B#<XXX>#",
+    "#########"
+  ],
+  "keys": {
+    "#": "defaultFillItem",
+    "X": "defaultElementFillItem",
+    "B": "defaultElementFillItem",
+    "<": "backButton",
+    ">": "forwardButton"
+  }
+}

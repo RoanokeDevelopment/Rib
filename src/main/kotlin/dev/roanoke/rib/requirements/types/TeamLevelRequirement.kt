@@ -1,21 +1,24 @@
 package dev.roanoke.rib.requirements.types
 
 import com.cobblemon.mod.common.util.party
+import dev.roanoke.rib.gui.settings.SettingsManager
+import dev.roanoke.rib.gui.settings.types.IntegerComparisonSetting
+import dev.roanoke.rib.gui.settings.types.IntegerSetting
 import dev.roanoke.rib.requirements.Requirement
 import dev.roanoke.rib.requirements.RequirementFactory
 import dev.roanoke.rib.utils.LoreLike
 import kotlinx.serialization.json.*
 import net.minecraft.server.network.ServerPlayerEntity
 
-enum class LevelComparison {
+enum class IntegerComparison {
     MINIMUM,
     EXACT,
     MAXIMUM
 }
 
 class TeamLevelRequirement(
-    val level: Int,
-    val comparison: LevelComparison
+    var level: Int,
+    var comparison: IntegerComparison
 ): Requirement(
     type = "TeamLevelRequirement"
 ) {
@@ -26,33 +29,45 @@ class TeamLevelRequirement(
             return TeamLevelRequirement(
                 level = json["level"]?.jsonPrimitive?.intOrNull ?: 0,
                 comparison = when((json["comparison"]?.jsonPrimitive?.contentOrNull ?: "").uppercase()) {
-                    "MINIMUM" -> LevelComparison.MINIMUM
-                    "EXACT" -> LevelComparison.EXACT
-                    "MAXIMUM" -> LevelComparison.MAXIMUM
-                    else -> LevelComparison.MINIMUM
+                    "MINIMUM" -> IntegerComparison.MINIMUM
+                    "EXACT" -> IntegerComparison.EXACT
+                    "MAXIMUM" -> IntegerComparison.MAXIMUM
+                    else -> IntegerComparison.MINIMUM
                 }
             )
         }
 
     }
 
+    init {
+        registerSettings()
+    }
+
+    override fun registerSettings() {
+        settings = SettingsManager(this)
+        settings.addSettings(
+            IntegerSetting("Level", { level }, { level = it }),
+            IntegerComparisonSetting("Comparison Type", { comparison }, { comparison = it })
+        )
+    }
+
     override fun passesRequirement(player: ServerPlayerEntity): Boolean {
         when (comparison) {
-            LevelComparison.MINIMUM -> {
+            IntegerComparison.MINIMUM -> {
                 player.party().forEach {
                     if (it.level < level) {
                         return false
                     }
                 }
             }
-            LevelComparison.EXACT -> {
+            IntegerComparison.EXACT -> {
                 player.party().forEach {
                     if (it.level != level) {
                         return false
                     }
                 }
             }
-            LevelComparison.MAXIMUM -> {
+            IntegerComparison.MAXIMUM -> {
                 player.party().forEach {
                     if (it.level > level) {
                         return false
@@ -65,9 +80,9 @@ class TeamLevelRequirement(
 
     fun comparisonDescriber(): String {
         return when(comparison) {
-            LevelComparison.MINIMUM -> "at least "
-            LevelComparison.EXACT -> ""
-            LevelComparison.MAXIMUM -> "lower than "
+            IntegerComparison.MINIMUM -> "at least "
+            IntegerComparison.EXACT -> ""
+            IntegerComparison.MAXIMUM -> "lower than "
         }
     }
 
@@ -87,6 +102,9 @@ class TeamLevelRequirement(
         return mutableMapOf(
             "level" to JsonPrimitive(level)
         )
+    }
+
+    override fun save() {
     }
 
 }
