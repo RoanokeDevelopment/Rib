@@ -52,6 +52,8 @@ class StringSetting(
 
         gui.title = Text.literal("Set $name")
 
+        gui.setDefaultInputValue(getValue())
+
         gui.setSlot(2, GuiElement(
             Items.SLIME_BALL.defaultStack.setCustomName(
                 Text.literal("Left click to set $name")
