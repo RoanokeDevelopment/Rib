@@ -87,7 +87,12 @@ class RewardsSetting(
                         }
                 ),
                 "X" to getValue().map {
-                    it.getGuiElement()
+                    it.getGuiElement(post = listOf(
+                        "",
+                        "<green>Left Click<reset> to edit Reward",
+                        "<red>Right Click<reset> to delete Reward",
+                        ""
+                    ).map { Rib.Rib.parseText(it) })
                         .setCallback { _, y: ClickType, _ ->
                             if (y.isRight) {
                                 val newRewards = getValue()
@@ -107,7 +112,7 @@ class RewardsSetting(
             }
         )
 
-        gui.title = Rib.Rib.parseText("Manage Rewards")
+        gui.title = Rib.Rib.parseText("Manage Rewards: $name")
 
         gui.open()
 
@@ -118,6 +123,10 @@ class RewardsSetting(
         lore.addAll(
             getDescriptionLore()
         )
+        lore.addAll(listOf(
+            "Rewards: ${getValue().size}",
+            ""
+        ).map { Rib.Rib.parseText(it) })
         lore.add(
             Rib.Rib.parseText("<gray>Click to edit / add new Rewards!")
         )

@@ -9,7 +9,7 @@ import dev.roanoke.rib.utils.LoreLike
 import kotlinx.serialization.json.*
 import net.minecraft.server.network.ServerPlayerEntity
 
-class HasBattleablePokemonRequirement: Requirement("HasBattleablePokemonRequirement") {
+class HasBattleablePokemonRequirement: Requirement("HasBattleablePokemonRequirement", "Has Battleable Pokemon") {
 
     companion object : RequirementFactory {
 
@@ -25,6 +25,13 @@ class HasBattleablePokemonRequirement: Requirement("HasBattleablePokemonRequirem
 
     override fun registerSettings() {
         settings = SettingsManager(this)
+    }
+
+    override fun description(): List<String> {
+        return listOf(
+            "Requires the player to have a Pokemon that can battle in their party",
+            "Basically - do they have at least one non-fainted Pokemon"
+        )
     }
 
     override fun passesRequirement(player: ServerPlayerEntity): Boolean {

@@ -10,18 +10,30 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import net.minecraft.item.Items
 import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.text.Text
 
 abstract class Requirement(
-    val type: String
+    val type: String,
+    val name: String = type
 ): ConfigurableGui() {
 
     lateinit var settings: SettingsManager
 
     abstract fun registerSettings()
 
+    abstract fun description(): List<String>
+
+    open fun lore(): List<Text> {
+        val lore = mutableListOf<String>("")
+        lore.addAll(description())
+        lore.add("")
+        return lore.map { Rib.Rib.parseText(it) }
+    }
+
     open fun getGuiElement(): GuiElementBuilder {
         return GuiElementBuilder(Items.IRON_CHESTPLATE)
-            .setName(Rib.Rib.parseText(type))
+            .setName(Rib.Rib.parseText(name))
+            .setLore(lore())
     }
 
     override fun openMenu(player: ServerPlayerEntity, onClose: (ServerPlayerEntity) -> Unit) {
@@ -36,7 +48,7 @@ abstract class Requirement(
             onClose = onClose
         )
 
-        gui.title = Rib.Rib.parseText("Edit $type")
+        gui.title = Rib.Rib.parseText("Edit $name")
 
         gui.open()
 

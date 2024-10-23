@@ -20,7 +20,8 @@ class TeamLevelRequirement(
     var level: Int,
     var comparison: IntegerComparison
 ): Requirement(
-    type = "TeamLevelRequirement"
+    type = "TeamLevelRequirement",
+    name = "Team Level Requirement"
 ) {
 
     companion object : RequirementFactory {
@@ -47,7 +48,20 @@ class TeamLevelRequirement(
         settings = SettingsManager(this)
         settings.addSettings(
             IntegerSetting("Level", { level }, { level = it }),
-            IntegerComparisonSetting("Comparison Type", { comparison }, { comparison = it })
+            IntegerComparisonSetting("<green>Comparison Type", { comparison }, { comparison = it })
+                .also {
+                    it.description = "\n<gray>The type of comparison that should be applied using the level defined" +
+                            "\n<gray>I.e., MINIMUM means the player's party must be AT LEAST the level set (${level})\n"
+                }
+        )
+    }
+
+    override fun description(): List<String> {
+        return listOf(
+            "A requirement that sets the team level a player's party must match to pass",
+            "You can change the <green>Comparison Type<reset>, i.e. MINIMUM, MAXIMUM, EXACT",
+            "Set two Team Level Requirements (one minimum, one maximum) to require Pokemon to",
+            "be within a range (i.e. 5 -> 10)"
         )
     }
 

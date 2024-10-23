@@ -18,7 +18,8 @@ class PokemonPropertiesRequirement(
     val list: List<String>,
     val listType: ListType
 ): Requirement(
-    type = "PokemonPropertiesRequirement"
+    type = "PokemonPropertiesRequirement",
+    name = "Pokemon Properties Requirement(s)"
 ) {
 
     val properties = list.map { PokemonProperties.parse(it) }
@@ -43,6 +44,16 @@ class PokemonPropertiesRequirement(
 
     override fun registerSettings() {
         settings = SettingsManager(this)
+    }
+
+    override fun description(): List<String> {
+        return listOf(
+            "Lets you define a list of 'Pokemon Properties' that all members",
+            "of a player's party must match in order to pass the requirement.",
+            "By having just the property 'shiny=yes', only a full team of shinies would pass.",
+            "",
+            "<red>This requirement can't be edited via the GUI! (currently)"
+        )
     }
 
     override fun passesRequirement(player: ServerPlayerEntity): Boolean {

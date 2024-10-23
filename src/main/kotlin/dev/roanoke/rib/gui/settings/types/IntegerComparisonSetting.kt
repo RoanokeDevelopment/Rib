@@ -73,7 +73,7 @@ class IntegerComparisonSetting(
             getDescriptionLore()
         )
         lore.add(
-            Rib.Rib.parseText("Currently: ${getValue()}")
+            Rib.Rib.parseText("Currently: <green>${getValue()}<reset>")
         )
         lore.add(
             Rib.Rib.parseText("Click to edit!")

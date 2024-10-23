@@ -38,6 +38,15 @@ class MultiRequirement(
         )
     }
 
+    override fun description(): List<String> {
+        return listOf(
+            "This Requirement can hold multiple requirements, and can be used to setup",
+            "multi-requirement things, such as rulesets for a battle",
+            "",
+            "<red>This can currently not be managed through the GUI."
+        )
+    }
+
     override fun passesRequirement(player: ServerPlayerEntity): Boolean {
         return requirements.all { it.passesRequirement(player) }
     }

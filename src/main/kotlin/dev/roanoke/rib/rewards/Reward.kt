@@ -8,6 +8,7 @@ import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonPrimitive
 import net.minecraft.item.Items
 import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.text.Text
 
 class Reward (
     var type: String = "command",
@@ -50,13 +51,16 @@ class Reward (
         }
     }
 
-    fun getGuiElement(): GuiElementBuilder {
-        return GuiElementBuilder(Items.DIAMOND)
-            .setLore(listOf(
+    fun getGuiElement(post: List<Text> = listOf()): GuiElementBuilder {
+        val lore = mutableListOf(
                 "Type: <dark_aqua>${type}",
                 "Value: <dark_aqua>${value}",
                 "Display: <dark_aqua>${display}"
-            ).map { Rib.Rib.parseText(it) })
+            ).map { Rib.Rib.parseText(it) }.toMutableList()
+        lore.addAll(post)
+
+        return GuiElementBuilder(Items.DIAMOND)
+            .setLore(lore)
     }
 
 }
