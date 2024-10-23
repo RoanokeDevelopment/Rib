@@ -40,6 +40,16 @@ class Reward (
         }
     }
 
+    fun executeReward(placeholders: Map<String, String>) {
+        if (type == "command") {
+            var commandString = value
+            placeholders.forEach { key, value ->
+                commandString = commandString.replace(key, value)
+            }
+            Rib.server?.commandManager?.dispatcher?.execute(commandString, Rib.server?.commandSource)
+        }
+    }
+
     fun getGuiElement(): GuiElementBuilder {
         return GuiElementBuilder(Items.DIAMOND)
             .setLore(listOf(

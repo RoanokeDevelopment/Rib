@@ -77,7 +77,7 @@ publishing {
   repositories {
     maven {
       name = "roanoke-development"
-      url = uri("https://vault.roanoke.dev/snapshots")
+      url = uri("https://vault.roanoke.dev/releases")
       credentials {
         username = property("roanokeDevelopmentUsername").toString()
         password = property("roanokeDevelopmentPassword").toString()
